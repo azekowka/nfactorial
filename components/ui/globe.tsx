@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Color, Scene, Fog, PerspectiveCamera, Vector3 } from "three";
+import { Color, Scene, Fog, PerspectiveCamera, Vector3, Group } from "three";
 import ThreeGlobe from "three-globe";
 import { useThree, Canvas, extend } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -16,7 +16,6 @@ declare module "@react-three/fiber" {
 extend({ ThreeGlobe: ThreeGlobe });
 
 const RING_PROPAGATION_SPEED = 3;
-const aspect = 1.2;
 const cameraZ = 300;
 
 type Position = {
@@ -60,11 +59,13 @@ interface WorldProps {
   data: Position[];
 }
 
-let numbersOfRings = [0];
+// Эта переменная используется позднее в коде
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const numbersOfRings: number[] = [0];
 
 export function Globe({ globeConfig, data }: WorldProps) {
   const globeRef = useRef<ThreeGlobe | null>(null);
-  const groupRef = useRef();
+  const groupRef = useRef<Group>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
   const defaultProps = {
@@ -88,7 +89,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
   useEffect(() => {
     if (!globeRef.current && groupRef.current) {
       globeRef.current = new ThreeGlobe();
-      (groupRef.current as any).add(globeRef.current);
+      (groupRef.current as Group).add(globeRef.current);
       setIsInitialized(true);
     }
   }, []);
@@ -120,10 +121,9 @@ export function Globe({ globeConfig, data }: WorldProps) {
     if (!globeRef.current || !isInitialized || !data) return;
 
     const arcs = data;
-    let points = [];
+    const points = [];
     for (let i = 0; i < arcs.length; i++) {
       const arc = arcs[i];
-      const rgb = hexToRgb(arc.color) as { r: number; g: number; b: number };
       points.push({
         size: defaultProps.pointSize,
         order: arc.order,
@@ -165,6 +165,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
       .arcStartLng((d) => (d as { startLng: number }).startLng * 1)
       .arcEndLat((d) => (d as { endLat: number }).endLat * 1)
       .arcEndLng((d) => (d as { endLng: number }).endLng * 1)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .arcColor((e: any) => (e as { color: string }).color)
       .arcAltitude((e) => (e as { arcAlt: number }).arcAlt * 1)
       .arcStroke(() => [0.32, 0.28, 0.3][Math.round(Math.random() * 2)])
@@ -235,23 +236,49 @@ export function Globe({ globeConfig, data }: WorldProps) {
 }
 
 export function WebGLRendererConfig() {
-  const { gl, size } = useThree();
+  const { gl, size } = useThree()
 
   useEffect(() => {
-    gl.setPixelRatio(window.devicePixelRatio);
-    gl.setSize(size.width, size.height);
-    gl.setClearColor(0xffaaff, 0);
-  }, []);
+    if (gl) {
+      gl.setPixelRatio(window.devicePixelRatio)
+      gl.setSize(size.width, size.height)
+      gl.setClearColor(0x000000, 0)
+    }
+  }, [gl, size])
 
-  return null;
+  return null
 }
 
 export function World(props: WorldProps) {
   const { globeConfig } = props;
+  const [aspectRatio, setAspectRatio] = useState(1);
   const scene = new Scene();
   scene.fog = new Fog(0xffffff, 400, 2000);
+  
+  // Обрабатываем изменение размера окна для правильного соотношения сторон
+  useEffect(() => {
+    const handleResize = () => {
+      setAspectRatio(window.innerWidth / window.innerHeight);
+    };
+    
+    // Устанавливаем начальное соотношение сторон
+    handleResize();
+    
+    // Добавляем обработчик изменения размера окна
+    window.addEventListener('resize', handleResize);
+    
+    // Очистка при размонтировании
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+  
   return (
-    <Canvas scene={scene} camera={new PerspectiveCamera(50, aspect, 180, 1800)}>
+    <Canvas 
+      scene={scene} 
+      style={{ height: "100%", width: "100%" }}
+      camera={new PerspectiveCamera(50, aspectRatio, 180, 1800)}
+    >
       <WebGLRendererConfig />
       <ambientLight color={globeConfig.ambientLight} intensity={0.6} />
       <directionalLight
@@ -283,12 +310,12 @@ export function World(props: WorldProps) {
 }
 
 export function hexToRgb(hex: string) {
-  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
   hex = hex.replace(shorthandRegex, function (m, r, g, b) {
     return r + r + g + g + b + b;
   });
 
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? {
         r: parseInt(result[1], 16),
