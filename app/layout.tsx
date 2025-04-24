@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 const GeistSans = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const GeistMono = Inter({ subsets: ["latin"], variable: "--font-mono" });
 import { ThemeProvider } from "next-themes";
+import { ClerkProvider, SignedIn } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
@@ -27,6 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+  <ClerkProvider>
     <html 
       lang="en" 
       className={cn(
@@ -50,5 +52,6 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
+  </ClerkProvider>
   );
 }

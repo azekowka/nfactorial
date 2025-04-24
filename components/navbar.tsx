@@ -14,6 +14,7 @@ import {
 import { ThemeToggle } from '@/./components/theme-toggle'
 import { useState } from "react";
 import { cn } from '@/lib/utils'
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 export function NavbarDemo() {
   const navItems = [
@@ -41,7 +42,12 @@ export function NavbarDemo() {
           <NavbarLogo />
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
-            <NavbarButton variant="secondary">Login</NavbarButton>
+            <SignedOut>
+              <NavbarButton href="/sign-in" variant="secondary">Login</NavbarButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
             <div className={cn(
               "inline-flex items-center justify-center rounded-md p-2",
               "text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white",
@@ -79,13 +85,21 @@ export function NavbarDemo() {
               </a>
             ))}
             <div className="flex w-full flex-col gap-4">
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Login
-              </NavbarButton>
+              <SignedOut>
+                <NavbarButton 
+                  href="/sign-in"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  variant="primary"
+                  className="w-full"
+                >
+                  Login
+                </NavbarButton>
+              </SignedOut>
+              <SignedIn>
+                <div className="flex justify-center py-2">
+                  <UserButton afterSignOutUrl="/" />
+                </div>
+              </SignedIn>
               <div className={cn(
                 "flex items-center justify-center rounded-md p-2",
                 "text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white",
