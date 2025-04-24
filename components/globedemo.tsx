@@ -397,7 +397,7 @@ export function GlobeDemo() {
 
   return (
     <div className="flex flex-col items-center justify-center w-full relative">
-      <div className="max-w-7xl mx-auto w-full relative h-full pt-10 pb-20">
+      <div className="max-w-7xl mx-auto w-full relative h-full pt-10 pb-0">
         <motion.div
           initial={{
             opacity: 0,
