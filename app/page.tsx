@@ -1,13 +1,13 @@
 import { Features } from '@/components/landing/features';
-import { Header } from '@/components/landing/header';
-import { GlobeDemo } from '@/components/ui/globedemo';
+import { GlobeDemo } from '@/components/globedemo';
+import { NavbarDemo } from '@/components/navbar';  
 
 export default function Home() {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <GlobeDemo />
-        <Features />
-      </div>
-    );
-  }
+  return (
+    <div className="min-h-screen flex flex-col">
+      <NavbarDemo />
+      <GlobeDemo />
+      <Features />
+    </div>
+  );
+}
