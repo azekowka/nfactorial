@@ -1,13 +1,14 @@
+import { NavbarDemo } from '@/components/navbar'; 
+import { GlobeDemo } from '@/components/globedemo'; 
 import { Features } from '@/components/landing/features';
-import { GlobeDemo } from '@/components/globedemo';
-import { NavbarDemo } from '@/components/navbar';  
+import { PageContainer } from '@/components/page-container';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <PageContainer>
       <NavbarDemo />
       <GlobeDemo />
       <Features />
-    </div>
+    </PageContainer>
   );
 }
