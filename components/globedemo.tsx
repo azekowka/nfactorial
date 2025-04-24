@@ -2,6 +2,7 @@
 import React from "react";
 import { motion } from "motion/react";
 import dynamic from "next/dynamic";
+import { Cover } from "@/components/ui/cover";
 
 const World = dynamic(() => import("./ui/globe").then((m) => m.World), {
   ssr: false,
@@ -411,13 +412,17 @@ export function GlobeDemo() {
           }}
           className="relative z-20 mb-10"
         >
-          <h2 className="text-center text-xl md:text-4xl font-bold text-black dark:text-white">
-            We sell soap worldwide
-          </h2>
-          <p className="text-center text-base md:text-lg font-normal text-neutral-700 dark:text-neutral-200 max-w-md mt-2 mx-auto">
-            This globe is interactive and customizable. Have fun with it, and
-            don&apos;t forget to share it. :)
-          </p>
+          <div className="text-center">
+            <h2 className="text-center text-xl md:text-7xl font-bold mb-6">
+              Explore the world, 
+            </h2>
+            <h2 className="text-center text-xl md:text-7xl font-bold">
+              one pin
+              <Cover>
+               at a time!
+              </Cover>
+            </h2>
+          </div>
         </motion.div>
         
         <div className="w-full h-[500px] md:h-[600px] relative">
