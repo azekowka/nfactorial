@@ -34,7 +34,7 @@ export function NavbarDemo() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="w-full py-4">
+    <div className="w-full py-4 relative">
       <Navbar>
         {/* Desktop Navigation */}
         <NavBody>
@@ -46,7 +46,8 @@ export function NavbarDemo() {
               "inline-flex items-center justify-center rounded-md p-2",
               "text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white",
               "hover:bg-neutral-100 dark:hover:bg-neutral-800",
-              "transition-colors focus:outline-none"
+              "transition-colors focus:outline-none",
+              "relative"
             )}>
               <ThemeToggle />
             </div>          
@@ -89,7 +90,8 @@ export function NavbarDemo() {
                 "flex items-center justify-center rounded-md p-2",
                 "text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white",
                 "hover:bg-neutral-100 dark:hover:bg-neutral-800",
-                "transition-colors focus:outline-none"
+                "transition-colors focus:outline-none",
+                "relative"
               )}>
                 <ThemeToggle />
               </div>
