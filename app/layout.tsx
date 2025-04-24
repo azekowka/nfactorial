@@ -1,20 +1,24 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+const GeistSans = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const GeistMono = Inter({ subsets: ["latin"], variable: "--font-mono" });
+import { ThemeProvider } from "next-themes";
+import { cn } from "@/lib/utils";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+};
 
 export const metadata: Metadata = {
-  title: "World Map Tracker",
-  description: "Engineered by Abdulaziz Gabitov, n! applicant",
+  title: {
+    default: "World Map Tracker",
+    template: "%s | World Map Tracker",
+  },
+  description: "Interactive world map visualization. Engineered by Abdulaziz Gabitov, n! applicant",
 };
 
 export default function RootLayout({
@@ -23,11 +27,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+    <html 
+      lang="en" 
+      className={cn(
+        GeistSans.variable,
+        GeistMono.variable,
+        "antialiased"
+      )}
+      suppressHydrationWarning
+    >
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body className="min-h-screen bg-background font-sans">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
