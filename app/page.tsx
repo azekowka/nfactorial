@@ -9,7 +9,7 @@ export default function Home() {
     <PageContainer>
       <NavbarDemo />
       <GlobeDemo />
-      <div className="w-full -mt-4 mb-4">
+      <div className="w-full -mt-4 mb-10">
         <AnimatedModalDemo />
       </div>
       <Features />

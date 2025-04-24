@@ -21,7 +21,9 @@ export function AnimatedModalDemo() {
   return (
     <div className="py-10 flex items-center justify-center">
       <Modal>
-        <ModalTrigger className="bg-black dark:bg-white dark:text-black text-white flex justify-center group/modal-btn px-6 py-3 rounded-lg text-lg font-medium">
+        <ModalTrigger 
+          className="bg-black dark:bg-white dark:text-black text-white flex justify-center items-center group/modal-btn px-8 py-4 rounded-xl text-xl font-semibold w-full max-w-md mx-auto hover:scale-105 transition-all duration-300"
+        >
           <span className="group-hover/modal-btn:translate-x-40 text-center transition duration-500">
             Book your flight
           </span>
