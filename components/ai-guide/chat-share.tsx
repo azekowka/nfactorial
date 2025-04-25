@@ -44,8 +44,10 @@ export function ChatShare({ chatId, className }: ChatShareProps) {
       return
     }
 
-    const url = new URL(result.sharePath, window.location.href)
-    setShareUrl(url.toString())
+    const baseUrl = window.location.origin
+    const shareUrlPath = result.sharePath
+    const fullShareUrl = `${baseUrl}/dashboard/ai${shareUrlPath}`
+    setShareUrl(fullShareUrl)
   }
 
   const handleCopy = () => {
