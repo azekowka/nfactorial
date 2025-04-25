@@ -3,13 +3,8 @@ import { History } from './history'
 import { HistoryList } from './history-list'
 
 const HistoryContainer: React.FC = async () => {
-  const enableSaveChatHistory = process.env.ENABLE_SAVE_CHAT_HISTORY === 'true'
-  if (!enableSaveChatHistory) {
-    return null
-  }
-
   return (
-    <div>
+    <div className="z-50">
       <History>
         <HistoryList userId="anonymous" />
       </History>

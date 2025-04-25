@@ -12,6 +12,7 @@ import { History as HistoryIcon, Menu } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Suspense, useTransition } from 'react'
 import { HistorySkeleton } from './history-skeleton'
+import { useState } from 'react'
 
 type HistoryProps = {
   children?: React.ReactNode
@@ -20,8 +21,10 @@ type HistoryProps = {
 export function History({ children }: HistoryProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
+  const [isOpen, setIsOpen] = useState(false)
 
   const onOpenChange = (open: boolean) => {
+    setIsOpen(open)
     if (open) {
       startTransition(() => {
         router.refresh()
@@ -30,23 +33,30 @@ export function History({ children }: HistoryProps) {
   }
 
   return (
-    <Sheet onOpenChange={onOpenChange}>
-      <SheetTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Menu />
-        </Button>
-      </SheetTrigger>
-      <SheetContent className="w-64 rounded-tl-xl rounded-bl-xl">
-        <SheetHeader>
-          <SheetTitle className="flex items-center gap-1 text-sm font-normal mb-2">
-            <HistoryIcon size={14} />
-            History
-          </SheetTitle>
-        </SheetHeader>
-        <div className="my-2 h-full pb-12 md:pb-10">
-          <Suspense fallback={<HistorySkeleton />}>{children}</Suspense>
-        </div>
-      </SheetContent>
-    </Sheet>
+    <div className="relative">
+      <Button 
+        variant="ghost" 
+        size="icon"
+        onClick={() => setIsOpen(true)}
+      >
+        <Menu />
+      </Button>
+      
+      {isOpen && (
+        <Sheet open={isOpen} onOpenChange={onOpenChange}>
+          <SheetContent className="w-64 rounded-tl-xl rounded-bl-xl">
+            <SheetHeader>
+              <SheetTitle className="flex items-center gap-1 text-sm font-normal mb-2">
+                <HistoryIcon size={14} />
+                History
+              </SheetTitle>
+            </SheetHeader>
+            <div className="my-2 h-full pb-12 md:pb-10">
+              <Suspense fallback={<HistorySkeleton />}>{children}</Suspense>
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
+    </div>
   )
 }
