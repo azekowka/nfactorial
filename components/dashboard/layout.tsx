@@ -249,7 +249,7 @@ function DashboardBreadcrumb() {
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
-        <BreadcrumbItem>
+{/*        <BreadcrumbItem>
           <BreadcrumbLink asChild>
             <Link href="#">Products</Link>
           </BreadcrumbLink>
@@ -257,7 +257,7 @@ function DashboardBreadcrumb() {
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbPage>All Products</BreadcrumbPage>
-        </BreadcrumbItem>
+        </BreadcrumbItem> */}
       </BreadcrumbList>
     </Breadcrumb>
   );
