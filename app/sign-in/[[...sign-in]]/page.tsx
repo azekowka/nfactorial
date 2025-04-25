@@ -35,8 +35,8 @@ export default function SignInPage() {
               footer: "hidden",
             },
           }}
-          redirectUrl="/"
-          afterSignInUrl="/"
+          redirectUrl="/dashboard"
+          afterSignInUrl="/dashboard"
           signUpUrl="/sign-up"
         />
       </div>

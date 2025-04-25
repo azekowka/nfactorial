@@ -35,8 +35,8 @@ export default function SignUpPage() {
             badge: "hidden"
           },
         }}
-        redirectUrl="/"
-        afterSignUpUrl="/"
+        redirectUrl="/dashboard"
+        afterSignUpUrl="/dashboard"
         signInUrl="/sign-in"
       />
     </div>

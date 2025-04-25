@@ -1,6 +1,25 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, ClerkMiddleware } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-export default clerkMiddleware();
+const middleware: ClerkMiddleware = (auth, req) => {
+  // Публичные маршруты, которые доступны без авторизации
+  const publicRoutes = ["/", "/sign-in", "/sign-up"];
+  const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname.startsWith(route));
+  
+  // Если пользователь вошел в систему и пытается получить доступ к страницам авторизации
+  if (auth.userId && (req.nextUrl.pathname === "/sign-in" || req.nextUrl.pathname === "/sign-up")) {
+    const dashboardUrl = new URL("/dashboard", req.url);
+    return NextResponse.redirect(dashboardUrl);
+  }
+
+  // Если пользователь не авторизован и пытается получить доступ к защищенным маршрутам
+  if (!auth.userId && !isPublicRoute) {
+    const signInUrl = new URL("/sign-in", req.url);
+    return NextResponse.redirect(signInUrl);
+  }
+}
+
+export default clerkMiddleware(middleware);
 
 export const config = {
   matcher: [
