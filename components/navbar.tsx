@@ -23,12 +23,12 @@ export function NavbarDemo() {
       link: "#features",
     },
     {
-      name: "Pricing",
-      link: "#pricing",
+      name: "Dashboard",
+      link: "/dashboard",
     },
     {
       name: "Contact",
-      link: "#contact",
+      link: "/contact",
     },
   ];
 
