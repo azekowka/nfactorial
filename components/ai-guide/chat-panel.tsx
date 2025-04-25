@@ -57,7 +57,7 @@ export function ChatPanel({
 
   const handleNewChat = () => {
     setMessages([])
-    router.push('/')
+    router.push('/dashboard/ai')
   }
 
   const isToolInvocationInProgress = () => {

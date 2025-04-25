@@ -105,8 +105,8 @@ export async function clearChats(
 
   await pipeline.exec()
 
-  revalidatePath('/')
-  redirect('/')
+  revalidatePath('/dashboard/ai')
+  redirect('/dashboard/ai')
 }
 
 export async function saveChat(chat: Chat, userId: string = 'anonymous') {

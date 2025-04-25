@@ -3,6 +3,8 @@ import { getSharedChat } from '@/lib/actions/chat'
 import { getModels } from '@/lib/config/models'
 import { convertToUIMessages } from '@/lib/utils'
 import { notFound } from 'next/navigation'
+import Layout from '@/components/dashboard/layout'
+import HistoryContainer from '@/components/ai-guide/history-container'
 
 export async function generateMetadata(props: {
   params: Promise<{ id: string }>
@@ -31,10 +33,20 @@ export default async function SharePage(props: {
 
   const models = await getModels()
   return (
-    <Chat
-      id={chat.id}
-      savedMessages={convertToUIMessages(chat.messages)}
-      models={models}
-    />
+    <Layout>
+      <div className="relative min-h-screen pt-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">
+            {chat?.title?.toString().slice(0, 50) || 'Shared Chat'}
+          </h2>
+          <HistoryContainer />
+        </div>
+        <Chat
+          id={chat.id}
+          savedMessages={convertToUIMessages(chat.messages)}
+          models={models}
+        />
+      </div>
+    </Layout>
   )
 }
