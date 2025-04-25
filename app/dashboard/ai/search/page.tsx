@@ -1,4 +1,4 @@
-import { Chat } from '@/components/chat'
+import { Chat } from '@/components/ai-guide/chat'
 import { getModels } from '@/lib/config/models'
 import { generateId } from 'ai'
 import { redirect } from 'next/navigation'

@@ -1,4 +1,4 @@
-import { Chat } from '@/components/chat'
+import { Chat } from '@/components/ai-guide/chat'
 import { getChat } from '@/lib/actions/chat'
 import { getModels } from '@/lib/config/models'
 import { convertToUIMessages } from '@/lib/utils'

@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { getCookie, setCookie } from '@/lib/utils/cookies'
 import { Globe } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Toggle } from './ui/toggle'
+import { Button } from '@/components/ai-guide/ui/button'
 
 export function SearchModeToggle() {
   const [isSearchMode, setIsSearchMode] = useState(true)
@@ -16,27 +16,27 @@ export function SearchModeToggle() {
     }
   }, [])
 
-  const handleSearchModeChange = (pressed: boolean) => {
-    setIsSearchMode(pressed)
-    setCookie('search-mode', pressed.toString())
+  const handleSearchModeChange = () => {
+    const newState = !isSearchMode
+    setIsSearchMode(newState)
+    setCookie('search-mode', newState.toString())
   }
 
   return (
-    <Toggle
+    <Button
       aria-label="Toggle search mode"
-      pressed={isSearchMode}
-      onPressedChange={handleSearchModeChange}
-      variant="outline"
+      onClick={handleSearchModeChange}
+      variant={isSearchMode ? "default" : "outline"}
+      size="sm"
       className={cn(
-        'gap-1 px-3 border border-input text-muted-foreground bg-background',
-        'data-[state=on]:bg-accent-blue',
-        'data-[state=on]:text-accent-blue-foreground',
-        'data-[state=on]:border-accent-blue-border',
-        'hover:bg-accent hover:text-accent-foreground rounded-full'
+        'gap-2 rounded-full',
+        isSearchMode 
+          ? 'bg-blue-500 text-white border-blue-600 hover:bg-blue-600' 
+          : 'bg-background hover:bg-accent hover:text-accent-foreground'
       )}
     >
-      <Globe className="size-4" />
-      <span className="text-xs">Search</span>
-    </Toggle>
+      <Globe className="h-4 w-4" />
+      <span>Search</span>
+    </Button>
   )
 }

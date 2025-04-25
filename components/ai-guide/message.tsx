@@ -6,9 +6,10 @@ import rehypeExternalLinks from 'rehype-external-links'
 import rehypeKatex from 'rehype-katex'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
-import { Citing } from './custom-link'
-import { CodeBlock } from './ui/codeblock'
-import { MemoizedReactMarkdown } from './ui/markdown'
+import { Citing } from '@/components/ai-guide/custom-link'
+import { CodeBlock } from '@/components/ai-guide/ui/codeblock'
+import { MemoizedReactMarkdown } from '@/components/ai-guide/ui/markdown'
+import { ComponentPropsWithoutRef } from 'react'
 
 export function BotMessage({
   message,
@@ -48,7 +49,10 @@ export function BotMessage({
       rehypePlugins={[[rehypeExternalLinks, { target: '_blank' }]]}
       remarkPlugins={[remarkGfm]}
       className={cn(
-        'prose-sm prose-neutral prose-a:text-accent-foreground/50',
+        'prose prose-neutral dark:prose-invert',
+        'prose-p:my-1.5 prose-headings:my-3',
+        'prose-strong:font-semibold',
+        'prose-li:my-0 pl-0',
         className
       )}
       components={{
@@ -82,7 +86,56 @@ export function BotMessage({
             />
           )
         },
-        a: Citing
+        a: Citing,
+        p: ({ children, ...props }: ComponentPropsWithoutRef<'p'>) => (
+          <p className="my-1.5" {...props}>
+            {children}
+          </p>
+        ),
+        strong: ({ children, ...props }: ComponentPropsWithoutRef<'strong'>) => (
+          <strong className="font-bold" {...props}>
+            {children}
+          </strong>
+        ),
+        ul: ({ children, ...props }: ComponentPropsWithoutRef<'ul'>) => {
+          // Remove non-DOM props that might be passed by react-markdown
+          const { node, ordered, ...domProps } = props as any;
+          
+          return (
+            <ul className="pl-6 ml-2 space-y-2" {...domProps}>
+              {children}
+            </ul>
+          );
+        },
+        ol: ({ children, ...props }: ComponentPropsWithoutRef<'ol'>) => {
+          // Remove non-DOM props that might be passed by react-markdown
+          const { node, ordered, ...domProps } = props as any;
+          
+          return (
+            <ol className="pl-6 ml-2 space-y-2" {...domProps}>
+              {children}
+            </ol>
+          );
+        },
+        li: ({ children, ...props }: ComponentPropsWithoutRef<'li'>) => {
+          // Check if first child is strong - this would be for the attraction names
+          const hasStrongFirstChild = 
+            children && 
+            Array.isArray(children) && 
+            children[0] && 
+            typeof children[0] === 'object' && 
+            'props' in children[0] && 
+            children[0].type === 'strong';
+          
+          // Remove non-DOM props that might be passed by react-markdown
+          const { node, ordered, checked, index, ...domProps } = props as any;
+          
+          return (
+            <li className={`ml-0 ${hasStrongFirstChild ? 'mb-1.5' : ''}`} {...domProps}>
+              {children}
+            </li>
+          );
+        }
       }}
     >
       {message}
