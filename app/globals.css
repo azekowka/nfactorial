@@ -119,3 +119,87 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Map styles */
+.map-container {
+  height: 100%;
+  width: 100%;
+}
+
+/* Vehicle marker styles */
+.vehicle-marker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transform-origin: center center;
+}
+
+.vehicle-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.mapboxgl-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+  z-index: 1;
+}
+
+/* Animation for vehicle icons */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes walk {
+  0% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  100% { transform: translateX(-2px); }
+}
+
+@keyframes drive {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Apply animations to vehicle types */
+.vehicle-marker:has(img[alt="✈️"]),
+.vehicle-marker:contains("✈️") {
+  animation: bounce 2s infinite !important;
+}
+
+.vehicle-marker:has(img[alt="🚗"]),
+.vehicle-marker:contains("🚗") {
+  animation: drive 0.5s infinite !important;
+}
+
+.vehicle-marker:has(img[alt="🚶"]),
+.vehicle-marker:contains("🚶") {
+  animation: walk 1s infinite !important;
+}
+
+/* Ensure children are visible */
+.mapboxgl-marker > * {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Ensure popups appear below markers */
+.mapboxgl-popup {
+  z-index: 998 !important;
+}
