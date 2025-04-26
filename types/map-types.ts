@@ -7,6 +7,7 @@ export interface Country {
   name: string;
   code: string;
   coordinates: Coordinates;
+  status?: 'visited' | 'want-to-visit' | null;
 }
 
 export interface RoutePoint {
