@@ -6,7 +6,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import * as turf from "@turf/turf";
 import { Country, VehicleType } from "@/types/map-types";
 
-// Mapbox access token - replace this with your actual token
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 
 interface MapContainerProps {
@@ -304,15 +303,64 @@ const MapContainer = ({
     animationRef.current = requestAnimationFrame(animate);
   }, [animationSpeed, isAnimating, route, selectedCountries, updateMarker, vehicleType]);
 
+  // Reset animation state and position
+  const resetAnimation = useCallback(() => {
+    console.log("Resetting animation");
+    
+    // Cancel any existing animation
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
+    
+    // Reset marker to first country
+    if (selectedCountries.length > 0) {
+      const firstCountry = selectedCountries[0];
+      const startCoords: [number, number] = [
+        firstCountry.coordinates.lng,
+        firstCountry.coordinates.lat
+      ];
+      markerRef.current = updateMarker(startCoords);
+      
+      // Center map on first country
+      if (mapRef.current) {
+        mapRef.current.flyTo({
+          center: startCoords,
+          zoom: 4,
+          duration: 1000
+        });
+      }
+    }
+    
+    // Fit bounds to show all countries if more than one
+    if (mapRef.current && selectedCountries.length > 1) {
+      const bounds = new mapboxgl.LngLatBounds();
+      selectedCountries.forEach((country) => {
+        bounds.extend([country.coordinates.lng, country.coordinates.lat]);
+      });
+      
+      mapRef.current.fitBounds(bounds, { 
+        padding: 100,
+        duration: 1000
+      });
+    }
+  }, [selectedCountries, updateMarker]);
+
   // Handle animation state changes
   useEffect(() => {
     console.log("Animation state changed:", isAnimating, hasStartedAnimation);
     
     if (isAnimating && !hasStartedAnimation && selectedCountries.length >= 2) {
+      // Start animation when play button is pressed
+      console.log("Starting animation from play button");
       setHasStartedAnimation(true);
       startAnimation();
     } else if (!isAnimating && hasStartedAnimation) {
+      // Stop animation when pause button is pressed
+      console.log("Stopping animation");
       setHasStartedAnimation(false);
+      
+      // Cancel animation frame
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
         animationRef.current = null;
@@ -327,21 +375,46 @@ const MapContainer = ({
     };
   }, [isAnimating, hasStartedAnimation, selectedCountries, startAnimation]);
 
+  // Add listener for explicit reset requests
+  useEffect(() => {
+    if (!isAnimating && !hasStartedAnimation && selectedCountries.length >= 2) {
+      // This is likely a reset request (animation was stopped and not playing)
+      resetAnimation();
+    }
+  }, [isAnimating, hasStartedAnimation, selectedCountries, resetAnimation]);
+
   // Handle export request
   useEffect(() => {
     if (isExporting && selectedCountries.length > 1) {
       console.log("Starting export animation");
-      startAnimation();
       
-      const timer = setTimeout(() => {
-        onExportComplete();
-      }, 3000);
+      // Reset any existing animation
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
       
-      return () => {
-        clearTimeout(timer);
-      };
+      // Wait for the map to be ready
+      setTimeout(() => {
+        // Reset marker to first country
+        if (selectedCountries.length > 0) {
+          const firstCountry = selectedCountries[0];
+          const startCoords: [number, number] = [
+            firstCountry.coordinates.lng,
+            firstCountry.coordinates.lat
+          ];
+          markerRef.current = updateMarker(startCoords);
+        }
+        
+        startAnimation();
+        
+        // Give the animation enough time to complete one cycle
+        setTimeout(() => {
+          onExportComplete();
+        }, 5000); // Adjust based on expected animation duration
+      }, 100);
     }
-  }, [isExporting, selectedCountries, onExportComplete, startAnimation]);
+  }, [isExporting, selectedCountries, onExportComplete, startAnimation, updateMarker]);
 
   return (
     <div className="relative w-full h-full">

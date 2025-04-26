@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MapContainer from "./map/MapContainer";
 import CountrySelector from "./map/CountrySelector";
 import ControlPanel from "./map/ControlPanel";
@@ -14,6 +14,20 @@ const TravelMapStudio = () => {
   const [animationSpeed, setAnimationSpeed] = useState(1);
   const [isExporting, setIsExporting] = useState(false);
   const [vehicleType, setVehicleType] = useState<VehicleType>("airplane");
+
+  // Make sure animation stops when no countries are selected
+  useEffect(() => {
+    if (selectedCountries.length < 2 && isAnimating) {
+      setIsAnimating(false);
+    }
+  }, [selectedCountries, isAnimating]);
+
+  // Stop normal animation when exporting
+  useEffect(() => {
+    if (isExporting && isAnimating) {
+      setIsAnimating(false);
+    }
+  }, [isExporting, isAnimating]);
 
   const handleCountrySelect = (country: Country) => {
     // Add country if not already selected
@@ -32,25 +46,39 @@ const TravelMapStudio = () => {
     setSelectedCountries(reorderedCountries);
   };
 
-  const handleStartAnimation = () => {
-    if (selectedCountries.length > 1) {
+  const handleStartAnimation = useCallback(() => {
+    // Only allow starting animation if not exporting and we have countries
+    if (selectedCountries.length > 1 && !isExporting) {
+      console.log("Starting animation from main component");
       setIsAnimating(true);
+    } else {
+      console.log("Cannot start animation: ", { 
+        countries: selectedCountries.length, 
+        isExporting 
+      });
     }
-  };
+  }, [selectedCountries.length, isExporting]);
 
-  const handleStopAnimation = () => {
+  const handleStopAnimation = useCallback(() => {
+    console.log("Stopping animation");
     setIsAnimating(false);
-  };
+  }, []);
 
   const handleSpeedChange = (speed: number) => {
     setAnimationSpeed(speed);
   };
 
   const handleExport = () => {
+    console.log("Starting export process");
+    // Stop regular animation and start export animation
+    if (isAnimating) {
+      setIsAnimating(false);
+    }
     setIsExporting(true);
   };
 
   const handleExportComplete = () => {
+    console.log("Export process complete");
     setIsExporting(false);
   };
 

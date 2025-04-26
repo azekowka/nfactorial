@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Play, Pause, RotateCcw } from "lucide-react";
+import { Play, Pause, RotateCcw, Square } from "lucide-react";
 import { Country } from "@/types/map-types";
 import * as turf from '@turf/turf';
 
@@ -58,10 +58,20 @@ const ControlPanel = ({
 
   const handlePlayPause = () => {
     if (isAnimating) {
+      // Pause the animation
+      console.log("Pause button clicked");
       onStopAnimation();
     } else {
+      // Start the animation
+      console.log("Play button clicked, starting animation");
       onStartAnimation();
     }
+  };
+
+  const handleStop = () => {
+    // Stop/reset the animation
+    console.log("Stop button clicked");
+    onStopAnimation();
   };
 
   // Format the distance with commas for thousands
@@ -80,30 +90,48 @@ const ControlPanel = ({
       )}
 
       <div className="flex items-center justify-center gap-4 mb-4">
+        {/* Play/Pause Button */}
         <button
           onClick={handlePlayPause}
           disabled={isDisabled}
-          className={`p-3 rounded-full ${
+          className={`p-3 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
             isDisabled
               ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
               : isAnimating
               ? "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50"
               : "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50"
           }`}
+          aria-label={isAnimating ? "Pause animation" : "Play animation"}
         >
           {isAnimating ? <Pause size={24} /> : <Play size={24} />}
         </button>
 
+        {/* Stop Button */}
         <button
-          onClick={() => onStopAnimation()}
+          onClick={handleStop}
           disabled={isDisabled || !isAnimating}
-          className={`p-3 rounded-full ${
+          className={`p-3 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
             isDisabled || !isAnimating
               ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
               : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50"
           }`}
+          aria-label="Stop animation"
         >
-          <RotateCcw size={24} />
+          <Square size={22} />
+        </button>
+
+        {/* Reset Button */}
+        <button
+          onClick={handleStop}
+          disabled={isDisabled}
+          className={`p-3 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+            isDisabled
+              ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
+              : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50"
+          }`}
+          aria-label="Reset animation"
+        >
+          <RotateCcw size={22} />
         </button>
       </div>
 
