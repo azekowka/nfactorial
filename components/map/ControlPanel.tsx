@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Play, Pause, RotateCcw, Square } from "lucide-react";
+import { Play, Pause, RotateCcw, Square, FileVideo } from "lucide-react";
 import { Country } from "@/types/map-types";
 import * as turf from '@turf/turf';
+import VideoExporter from "./VideoExporter";
 
 interface ControlPanelProps {
   selectedCountries: Country[];
@@ -12,6 +13,8 @@ interface ControlPanelProps {
   onStartAnimation: () => void;
   onStopAnimation: () => void;
   onSpeedChange: (speed: number) => void;
+  onExport: () => void;
+  isExporting: boolean;
 }
 
 const ControlPanel = ({
@@ -21,6 +24,8 @@ const ControlPanel = ({
   onStartAnimation,
   onStopAnimation,
   onSpeedChange,
+  onExport,
+  isExporting,
 }: ControlPanelProps) => {
   const isDisabled = selectedCountries.length < 2;
   const [totalDistance, setTotalDistance] = useState<number>(0);
@@ -56,130 +61,76 @@ const ControlPanel = ({
     onSpeedChange(newSpeed);
   };
 
-  const handlePlayPause = () => {
-    if (isAnimating) {
-      // Pause the animation
-      console.log("Pause button clicked");
-      onStopAnimation();
-    } else {
-      // Start the animation
-      console.log("Play button clicked, starting animation");
-      onStartAnimation();
-    }
-  };
-
-  const handleStop = () => {
-    // Stop/reset the animation
-    console.log("Stop button clicked");
-    onStopAnimation();
-  };
-
   // Format the distance with commas for thousands
   const formatDistance = (distance: number): string => {
     return distance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   return (
-    <div className="flex flex-col p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-      <h2 className="text-xl font-bold mb-4">Animation Controls</h2>
+    <div className="flex flex-col gap-4">
+      <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+        <h2 className="text-xl font-bold mb-4">Animation Controls</h2>
 
-      {isDisabled && (
-        <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 p-2 rounded-md mb-4 text-sm">
-          Select at least two countries to create an animation
+        {isDisabled && (
+          <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 p-2 rounded-md mb-4 text-sm">
+            Select at least two countries to create an animation
+          </div>
+        )}
+
+        <div className="flex items-center justify-center gap-4 mb-4">
+          <VideoExporter
+            selectedCountries={selectedCountries}
+            onExport={onExport}
+            isExporting={isExporting}
+          />
         </div>
-      )}
 
-      <div className="flex items-center justify-center gap-4 mb-4">
-        {/* Play/Pause Button */}
-        <button
-          onClick={handlePlayPause}
-          disabled={isDisabled}
-          className={`p-3 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-            isDisabled
-              ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
-              : isAnimating
-              ? "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50"
-              : "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50"
-          }`}
-          aria-label={isAnimating ? "Pause animation" : "Play animation"}
-        >
-          {isAnimating ? <Pause size={24} /> : <Play size={24} />}
-        </button>
-
-        {/* Stop Button */}
-        <button
-          onClick={handleStop}
-          disabled={isDisabled || !isAnimating}
-          className={`p-3 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-            isDisabled || !isAnimating
-              ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
-              : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50"
-          }`}
-          aria-label="Stop animation"
-        >
-          <Square size={22} />
-        </button>
-
-        {/* Reset Button */}
-        <button
-          onClick={handleStop}
-          disabled={isDisabled}
-          className={`p-3 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-            isDisabled
-              ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
-              : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50"
-          }`}
-          aria-label="Reset animation"
-        >
-          <RotateCcw size={22} />
-        </button>
-      </div>
-
-      <div className="mb-4">
-        <div className="flex justify-between items-center mb-1">
-          <label htmlFor="speed-control" className="text-sm font-medium">
-            Animation Speed
-          </label>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            {animationSpeed.toFixed(1)}x
-          </span>
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-1">
+            <label htmlFor="speed-control" className="text-sm font-medium">
+              Animation Speed
+            </label>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              {animationSpeed.toFixed(1)}x
+            </span>
+          </div>
+          <input
+            id="speed-control"
+            type="range"
+            min="0.5"
+            max="3"
+            step="0.5"
+            value={animationSpeed}
+            onChange={handleSpeedChange}
+            disabled={isDisabled}
+            className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+          />
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <span>Slow</span>
+            <span>Fast</span>
+          </div>
         </div>
-        <input
-          id="speed-control"
-          type="range"
-          min="0.5"
-          max="3"
-          step="0.5"
-          value={animationSpeed}
-          onChange={handleSpeedChange}
-          disabled={isDisabled}
-          className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
-        />
-        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-          <span>Slow</span>
-          <span>Fast</span>
-        </div>
-      </div>
 
-      <div className="flex flex-col gap-2">
-        <h3 className="font-medium text-sm mb-1">Trip Stats</h3>
-        
-        <div className="flex justify-between">
-          <span className="text-sm text-gray-500 dark:text-gray-400">Countries:</span>
-          <span className="text-sm font-medium">{selectedCountries.length}</span>
-        </div>
-        
-        <div className="flex justify-between">
-          <span className="text-sm text-gray-500 dark:text-gray-400">Distance:</span>
-          <span className="text-sm font-medium">
-            {totalDistance > 0 
-              ? `${formatDistance(totalDistance)} km` 
-              : "-"}
-          </span>
+        <div className="flex flex-col gap-2">
+          <h3 className="font-medium text-sm mb-1">Trip Stats</h3>
+          
+          <div className="flex justify-between">
+            <span className="text-sm text-gray-500 dark:text-gray-400">Countries:</span>
+            <span className="text-sm font-medium">{selectedCountries.length}</span>
+          </div>
+          
+          <div className="flex justify-between">
+            <span className="text-sm text-gray-500 dark:text-gray-400">Distance:</span>
+            <span className="text-sm font-medium">
+              {totalDistance > 0 
+                ? `${formatDistance(totalDistance)} km` 
+                : "-"}
+            </span>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default ControlPanel; 
+export default ControlPanel;

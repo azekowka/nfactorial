@@ -25,7 +25,6 @@ const VideoExporter = ({
 
   return (
     <div className="flex flex-col p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-      <h2 className="text-xl font-bold mb-4">Export Video</h2>
       <div className="flex justify-center">
         <button
           onClick={handleExport}

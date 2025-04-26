@@ -100,16 +100,17 @@ const TravelMapStudio = () => {
       </div>
       
       <div className="w-full md:w-1/4 flex flex-col gap-4">
+
+        <VehicleSelector
+          vehicleType={vehicleType}
+          onVehicleChange={handleVehicleChange}
+        />
+
         <CountrySelector 
           selectedCountries={selectedCountries}
           onSelectCountry={handleCountrySelect}
           onRemoveCountry={handleCountryRemove}
           onReorderCountries={handleReorderCountries}
-        />
-        
-        <VehicleSelector
-          vehicleType={vehicleType}
-          onVehicleChange={handleVehicleChange}
         />
         
         <ControlPanel 
@@ -119,13 +120,15 @@ const TravelMapStudio = () => {
           onStartAnimation={handleStartAnimation}
           onStopAnimation={handleStopAnimation}
           onSpeedChange={handleSpeedChange}
+          onExport={handleExport}
+          isExporting={isExporting}
         />
-        
+        {/*
         <VideoExporter 
           selectedCountries={selectedCountries}
           onExport={handleExport}
           isExporting={isExporting}
-        />
+        />*/}
       </div>
     </div>
   );
