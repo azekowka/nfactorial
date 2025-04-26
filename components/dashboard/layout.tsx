@@ -106,19 +106,19 @@ function DesktopNav({ expanded, setExpanded }: { expanded: boolean; setExpanded:
           <Home className="h-5 w-5" />
         </ExpandableNavItem>
 
-        <ExpandableNavItem expanded={expanded} href="#" label="Orders">
-          <ShoppingCart className="h-5 w-5" />
+        <ExpandableNavItem expanded={expanded} href="/dashboard/map-animate" label="Animate Travel Map">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6z" />
+            <path d="M9 3v15" />
+            <path d="M15 6v15" />
+          </svg>
         </ExpandableNavItem>
 
-        <ExpandableNavItem expanded={expanded} href="/dashboard/#" label="Products">
-          <Package className="h-5 w-5" />
-        </ExpandableNavItem>
-
-        <ExpandableNavItem expanded={expanded} href="/dashboard/ai" label="Customers">
+        <ExpandableNavItem expanded={expanded} href="/dashboard/ai" label="AI Travel Guide">
           <Users2 className="h-5 w-5" />
         </ExpandableNavItem>
 
-        <ExpandableNavItem expanded={expanded} href="#" label="Analytics">
+        <ExpandableNavItem expanded={expanded} href="/dashboard" label="Analytics">
           <LineChart className="h-5 w-5" />
         </ExpandableNavItem>
       </nav>
