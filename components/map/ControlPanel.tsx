@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
-import { Play, Pause, RotateCcw, FastForward } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Play, Pause, RotateCcw } from "lucide-react";
 import { Country } from "@/types/map-types";
+import * as turf from '@turf/turf';
 
 interface ControlPanelProps {
   selectedCountries: Country[];
@@ -22,6 +23,33 @@ const ControlPanel = ({
   onSpeedChange,
 }: ControlPanelProps) => {
   const isDisabled = selectedCountries.length < 2;
+  const [totalDistance, setTotalDistance] = useState<number>(0);
+
+  // Calculate the total distance between selected countries
+  useEffect(() => {
+    if (selectedCountries.length < 2) {
+      setTotalDistance(0);
+      return;
+    }
+
+    try {
+      // Create coordinates array for the route
+      const coordinates = selectedCountries.map(country => [
+        country.coordinates.lng,
+        country.coordinates.lat
+      ]);
+      
+      // Create a turf linestring for distance calculation
+      const routeLine = turf.lineString(coordinates);
+      const distance = turf.length(routeLine, { units: 'kilometers' });
+      
+      // Round to the nearest whole number
+      setTotalDistance(Math.round(distance));
+    } catch (error) {
+      console.error("Error calculating distance:", error);
+      setTotalDistance(0);
+    }
+  }, [selectedCountries]);
 
   const handleSpeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newSpeed = parseFloat(e.target.value);
@@ -34,6 +62,11 @@ const ControlPanel = ({
     } else {
       onStartAnimation();
     }
+  };
+
+  // Format the distance with commas for thousands
+  const formatDistance = (distance: number): string => {
+    return distance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   return (
@@ -102,20 +135,18 @@ const ControlPanel = ({
 
       <div className="flex flex-col gap-2">
         <h3 className="font-medium text-sm mb-1">Trip Stats</h3>
+        
         <div className="flex justify-between">
           <span className="text-sm text-gray-500 dark:text-gray-400">Countries:</span>
           <span className="text-sm font-medium">{selectedCountries.length}</span>
         </div>
+        
         <div className="flex justify-between">
           <span className="text-sm text-gray-500 dark:text-gray-400">Distance:</span>
           <span className="text-sm font-medium">
-            {selectedCountries.length > 1 ? "Calculating..." : "-"}
-          </span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-sm text-gray-500 dark:text-gray-400">Duration:</span>
-          <span className="text-sm font-medium">
-            {selectedCountries.length > 1 ? "10 seconds" : "-"}
+            {totalDistance > 0 
+              ? `${formatDistance(totalDistance)} km` 
+              : "-"}
           </span>
         </div>
       </div>
