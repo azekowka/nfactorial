@@ -59,10 +59,6 @@ const VehicleSelector = ({
           </button>
         ))}
       </div>
-      
-      <p className="text-gray-500 dark:text-gray-400 text-sm mt-3">
-        Choose a transport type for your journey animation
-      </p>
     </div>
   );
 };

@@ -31,20 +31,17 @@ const CountrySelector = ({
         const response = await fetch("https://restcountries.com/v3.1/all?fields=name,cca2,flags,latlng");
         const data = await response.json();
         
-        // Transform API data to our format
         const formattedCountries: Country[] = data.map((country: any) => ({
           name: country.name.common,
           code: country.cca2,
           coordinates: {
-            lng: country.latlng[1], // API returns [lat, lng], we need to swap
+            lng: country.latlng[1],
             lat: country.latlng[0]
           },
           status: null
         }));
         
-        // Sort countries alphabetically
         formattedCountries.sort((a, b) => a.name.localeCompare(b.name));
-        
         setAllCountries(formattedCountries);
       } catch (error) {
         console.error("Error fetching countries:", error);
@@ -66,7 +63,7 @@ const CountrySelector = ({
           country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           country.code.toLowerCase().includes(searchTerm.toLowerCase())
         )
-        .slice(0, 5); // Limit to 5 results for better UI
+        .slice(0, 5);
       
       setFilteredCountries(filtered);
     }
@@ -83,24 +80,22 @@ const CountrySelector = ({
     onReorderCountries(items);
   };
   
-  // Set country status and add to selected countries
   const addCountryWithStatus = (country: Country, status: 'visited' | 'want-to-visit' | null) => {
-    // Don't add if already in the list
     if (selectedCountries.some(c => c.code === country.code)) return;
     
     const updatedCountry = { ...country, status };
     onSelectCountry(updatedCountry);
-    setSearchTerm(""); // Clear search after adding
+    setSearchTerm("");
   };
 
   return (
     <div className="flex flex-col p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
       <h2 className="text-xl font-bold mb-4">Add Countries</h2>
-      
+      {/*}
       <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
         Search for countries to add to your map
       </p>
-      
+*/}      
       {/* Country search and selection */}
       <div className="mb-6">
         <div className="relative mb-2">
@@ -115,14 +110,12 @@ const CountrySelector = ({
           />
         </div>
         
-        {/* Loading indicator */}
         {isLoading && (
           <div className="text-center py-2 text-gray-500 dark:text-gray-400">
             Loading countries...
           </div>
         )}
         
-        {/* Search results with direct action buttons */}
         {!isLoading && filteredCountries.length > 0 && (
           <div className="space-y-2">
             {filteredCountries.map((country) => (
@@ -137,6 +130,7 @@ const CountrySelector = ({
                         src={`https://flagcdn.com/w80/${country.code.toLowerCase()}.png`}
                         alt={`${country.name} flag`}
                         className="w-full h-auto"
+                        loading="lazy"
                       />
                     </div>
                     <span className="font-medium">{country.name}</span>
@@ -168,11 +162,14 @@ const CountrySelector = ({
       
       {/* Trip itinerary */}
       <div>
-        <h3 className="font-medium mb-3">Trip Itinerary</h3>
+        <h3 className="font-medium mb-3">My Trip</h3>
         {selectedCountries.length === 0 ? (
           <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">Add countries to create your travel route</p>
         ) : (
-          <DragDropContext onDragEnd={handleDragEnd}>
+          <DragDropContext 
+            onDragEnd={handleDragEnd}
+            ignoreContainerClipping={false} // Fixed: Explicit boolean value
+          >
             <Droppable droppableId="itinerary">
               {(provided) => (
                 <ul
@@ -198,6 +195,7 @@ const CountrySelector = ({
                                 src={`https://flagcdn.com/w80/${country.code.toLowerCase()}.png`}
                                 alt={`${country.name} flag`}
                                 className="w-full h-auto"
+                                loading="lazy"
                               />
                             </div>
                             <span className="font-medium">{country.name}</span>
@@ -216,6 +214,7 @@ const CountrySelector = ({
                           <button
                             onClick={() => onRemoveCountry(country.code)}
                             className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 focus:outline-none"
+                            aria-label="Remove country"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -236,4 +235,4 @@ const CountrySelector = ({
   );
 };
 
-export default CountrySelector; 
+export default CountrySelector;
