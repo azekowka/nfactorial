@@ -3,7 +3,7 @@ import { GlobeDemo } from '@/components/globedemo';
 import { Features } from '@/components/landing/features';
 import { AnimatedModalDemo } from '@/components/modal';
 import { PageContainer } from '@/components/page-container';
-
+import { InfiniteSliderDemo } from '@/components/slider';
 export default function Home() {
   return (
     <PageContainer>
@@ -13,6 +13,7 @@ export default function Home() {
         <AnimatedModalDemo />
       </div>
       <Features />
+      <InfiniteSliderDemo />
     </PageContainer>
   );
 }
