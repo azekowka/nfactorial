@@ -10,11 +10,14 @@ export default function CardDemo3() {
       <CardSkeletonContainer className="h-[15rem]">
         <Skeleton />
       </CardSkeletonContainer>
-      <CardTitle>Damn good card</CardTitle>
-      <CardDescription>
-        A card that showcases a set of tools that you use to create your
-        product.
-      </CardDescription>
+      <div className="relative z-10">
+        <CardTitle className="font-bold text-xl md:text-2xl text-gray-50 mt-2">
+          AI Travel Guide
+        </CardTitle>
+        <CardDescription className="font-normal text-sm text-gray-50 my-4">
+          Get personalized travel recommendations and insights.
+        </CardDescription>
+      </div>
     </Card>
   );
 }
@@ -146,7 +149,7 @@ export const Card = ({
   return (
     <div
       className={cn(
-        "w-full h-full p-6 rounded-xl border border-[rgba(255,255,255,0.10)] bg-transparent shadow-none group",
+        "w-full h-full p-6 rounded-xl border border-zinc-800 bg-transparent shadow-none group",
         className
       )}
     >
@@ -165,7 +168,7 @@ export const CardTitle = ({
   return (
     <h3
       className={cn(
-        "text-lg font-semibold text-gray-800 dark:text-white py-2",
+        "text-lg font-semibold dark:text-white py-2",
         className
       )}
     >
@@ -184,7 +187,7 @@ export const CardDescription = ({
   return (
     <p
       className={cn(
-        "text-sm font-normal text-neutral-600 dark:text-neutral-400 max-w-sm",
+        "text-sm font-normal text-neutral-600 dark:text-neutral-400",
         className
       )}
     >

@@ -10,13 +10,13 @@ export default function Dashboard() {
     <div data-theme="dark">
       <Layout>
         <div className="flex flex-row justify-center items-stretch gap-6 mx-auto max-w-6xl mt-20">
-          <div className="flex-1 w-full max-w-sm min-h-[24rem]">
+          <div className="flex-1 w-full max-w-sm h-[400px]">
             <CardDemo2 />
           </div>
-          <div className="flex-1 w-full max-w-sm min-h-[24rem]">
+          <div className="flex-1 w-full max-w-sm h-[400px]">
             <CardDemo3 />
           </div>
-          <div className="flex-1 w-full max-w-sm min-h-[24rem]">
+          <div className="flex-1 w-full max-w-sm h-[400px]">
             <CardDemo1 />
           </div>
         </div>
