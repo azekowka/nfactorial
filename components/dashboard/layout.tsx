@@ -46,7 +46,7 @@ export default function DashboardLayout({
 
   return (
     <Providers>
-      <main className="flex min-h-screen w-full flex-col bg-muted/40">
+      <main className="flex min-h-screen w-full flex-col">
         <DesktopNav expanded={expanded} setExpanded={setExpanded} />
         <div className={cn(
           "flex flex-col sm:gap-4 sm:py-4 transition-all duration-300",
@@ -59,7 +59,7 @@ export default function DashboardLayout({
             <ThemeToggle />
             <User />
           </header>
-          <main className="grid flex-1 items-start gap-2 p-4 sm:px-6 sm:py-0 md:gap-4 bg-muted/40">
+          <main className="grid flex-1 items-start gap-2 p-4 sm:px-6 sm:py-0 md:gap-4">
             {children}
           </main>
         </div>
