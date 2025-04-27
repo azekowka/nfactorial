@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react';
 import * as d3 from 'd3';
 import * as topojson from 'topojson-client';
 
@@ -17,8 +17,15 @@ interface CountryData {
   [countryCode: string]: CountryStatus;
 }
 
-const WorldMap = ({ width, height }: WorldMapProps) => {
+// Expose functions for external use
+export interface WorldMapRef {
+  exportAsSVG: () => void;
+  exportAsPNG: () => void;
+}
+
+const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({ width, height }, ref) => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
   const [countryData, setCountryData] = useState<CountryData>({});
   const [selectedCountry, setSelectedCountry] = useState<{
     code: string;
@@ -28,6 +35,127 @@ const WorldMap = ({ width, height }: WorldMapProps) => {
   } | null>(null);
   const [loading, setLoading] = useState(false);
   const [debug, setDebug] = useState<string[]>([]);
+
+  // Expose functions via ref
+  useImperativeHandle(ref, () => ({
+    exportAsSVG: () => {
+      exportAsSVG();
+    },
+    exportAsPNG: () => {
+      exportAsPNG();
+    }
+  }));
+
+  // Function to export the map as SVG
+  const exportAsSVG = () => {
+    if (!mapRef.current || !svgRef.current) return;
+    
+    try {
+      // Get the SVG element
+      const svgElement = svgRef.current;
+      
+      // Create a copy of the SVG element to work with
+      const svgCopy = svgElement.cloneNode(true) as SVGSVGElement;
+      
+      // Set a white background
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('width', width.toString());
+      rect.setAttribute('height', height.toString());
+      rect.setAttribute('fill', 'white');
+      svgCopy.insertBefore(rect, svgCopy.firstChild);
+      
+      // Convert SVG to a string
+      const svgData = new XMLSerializer().serializeToString(svgCopy);
+      
+      // Create a Blob containing the SVG data
+      const blob = new Blob([svgData], { type: 'image/svg+xml' });
+      
+      // Create a URL to the Blob
+      const url = URL.createObjectURL(blob);
+      
+      // Create a download link and click it
+      const link = document.createElement('a');
+      link.download = 'world-map.svg';
+      link.href = url;
+      link.click();
+      
+      // Clean up
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting SVG:', error);
+    }
+  };
+
+  // Function to export the map as PNG
+  const exportAsPNG = () => {
+    if (!mapRef.current || !svgRef.current) return;
+    
+    try {
+      // Get the SVG element
+      const svgElement = svgRef.current;
+      
+      // Create a copy of the SVG element to work with
+      const svgCopy = svgElement.cloneNode(true) as SVGSVGElement;
+      
+      // Set a white background
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('width', width.toString());
+      rect.setAttribute('height', height.toString());
+      rect.setAttribute('fill', 'white');
+      svgCopy.insertBefore(rect, svgCopy.firstChild);
+      
+      // Convert SVG to a string
+      const svgData = new XMLSerializer().serializeToString(svgCopy);
+      
+      // Create a URL for the SVG data
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(svgBlob);
+      
+      // Create an Image element
+      const img = new Image();
+      
+      // Set up load handler
+      img.onload = () => {
+        // Create a canvas element
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw the image on the canvas
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.fillStyle = 'white';
+          ctx.fillRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0);
+          
+          // Convert canvas to PNG
+          canvas.toBlob((blob) => {
+            if (blob) {
+              // Create a URL for the PNG blob
+              const pngUrl = URL.createObjectURL(blob);
+              
+              // Create a download link and click it
+              const link = document.createElement('a');
+              link.download = 'world-map.png';
+              link.href = pngUrl;
+              link.click();
+              
+              // Clean up
+              URL.revokeObjectURL(pngUrl);
+            }
+          }, 'image/png');
+        }
+        
+        // Clean up
+        URL.revokeObjectURL(url);
+      };
+      
+      // Load the SVG as an image
+      img.src = url;
+    } catch (error) {
+      console.error('Error exporting PNG:', error);
+    }
+  };
 
   // Add debug info
   const addDebug = (message: string) => {
@@ -129,29 +257,33 @@ const WorldMap = ({ width, height }: WorldMapProps) => {
   // Draw the map with current country data
   const drawMap = (data: CountryData) => {
     if (!mapRef.current) return;
-    
+
     // Clear any previous content
     mapRef.current.innerHTML = '';
     addDebug('Redrawing map');
-    
+
     // Create SVG
     const svg = d3.select(mapRef.current)
       .append('svg')
       .attr('width', width)
       .attr('height', height)
+      .attr('id', 'world-map-svg')
       .style('overflow', 'hidden');
     
+    // Save reference to the SVG element
+    svgRef.current = svg.node();
+
     // Create map group
     const gMap = svg.append('g');
-    
+
     // Define map projection
     const projection = d3.geoMercator()
       .scale(width / 2 / Math.PI)
       .translate([width / 2, height / 2]);
-    
+
     // Define path generator
     const path = d3.geoPath().projection(projection);
-    
+
     // Setup zoom behavior
     const zoom = d3.zoom()
       .scaleExtent([1, 10])
@@ -159,7 +291,7 @@ const WorldMap = ({ width, height }: WorldMapProps) => {
         const { transform } = event;
         gMap.attr('transform', transform);
       });
-    
+
     // Apply zoom to SVG
     svg.call(zoom as any);
     
@@ -167,12 +299,15 @@ const WorldMap = ({ width, height }: WorldMapProps) => {
     svg.on('click', () => {
       setSelectedCountry(null);
     });
-    
+
+    // Add title for the map
+    svg.append('title').text('My World Travel Map');
+
     // Load world map data
     d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
       .then((worldData: any) => {
         const countries = topojson.feature(worldData as any, (worldData as any).objects.countries);
-        
+
         // Draw countries
         gMap.selectAll('path')
           .data((countries as any).features)
@@ -249,159 +384,127 @@ const WorldMap = ({ width, height }: WorldMapProps) => {
               countryCode = countryName.substring(0, 3).toUpperCase();
             }
             
-            // Don't change color if this is the selected country
-            if (!selectedCountry || selectedCountry.code !== countryCode) {
-              const status = countryCode ? data[countryCode] : null;
-              
-              if (status === 'visited') {
-                d3.select(this).attr('fill', '#4CAF50');
-              } else if (status === 'want-to-visit') {
-                d3.select(this).attr('fill', '#2196F3');
-              } else {
-                d3.select(this).attr('fill', '#D0D0D0');
-              }
-            }
-          })
-          .on('click', function(this: SVGPathElement, event: any, d: any) {
-            event.stopPropagation(); // Prevent triggering click on the map
-            
-            // Get country info, use a fallback for the code if iso_a3 is undefined
-            const countryName = d.properties.name;
-            let countryCode = d.properties.iso_a3;
-            
-            // For countries where iso_a3 is undefined, use a fallback code based on the country name
-            if (!countryCode) {
-              countryCode = countryName.substring(0, 3).toUpperCase();
-              addDebug(`Using fallback code ${countryCode} for ${countryName}`);
-            }
-            
-            addDebug(`Clicked on ${countryName} (${countryCode})`);
-            
-            // Show the popup menu
-            setSelectedCountry({
-              code: countryCode,
-              name: countryName,
-              x: event.pageX,
-              y: event.pageY
-            });
-          });
-          
-        // Apply colors to countries based on current data
-        Object.entries(data).forEach(([code, status]) => {
-          const selector = `#country-${code}`;
-          const countryPath = d3.select(mapRef.current).select(selector);
-          
-          if (countryPath.size() > 0) {
+            // Normal color based on status
+            const status = countryCode ? data[countryCode] : null;
             let color = '#D0D0D0'; // Default
+            
             if (status === 'visited') {
               color = '#4CAF50'; // Green
             } else if (status === 'want-to-visit') {
               color = '#2196F3'; // Blue
             }
             
-            countryPath.attr('fill', color);
-            addDebug(`Set initial color for ${code} to ${status}`);
-          }
-        });
-          
-        addDebug(`Rendered ${(countries as any).features.length} countries`);
-      })
-      .catch(error => {
-        console.error('Error loading world map data:', error);
-        addDebug(`Map data error: ${error}`);
+            d3.select(this).attr('fill', color);
+          })
+          .on('click', function(this: SVGPathElement, event: any, d: any) {
+            event.stopPropagation();
+            
+            const countryName = d.properties.name;
+            let countryCode = d.properties.iso_a3;
+            
+            if (!countryCode) {
+              countryCode = countryName.substring(0, 3).toUpperCase();
+            }
+            
+            // Calculate position for the popup
+            const bounds = (this as SVGPathElement).getBoundingClientRect();
+            const mapBounds = mapRef.current?.getBoundingClientRect();
+            
+            if (mapBounds) {
+              const x = bounds.x + bounds.width / 2 - mapBounds.x;
+              const y = bounds.y + bounds.height / 2 - mapBounds.y;
+              
+              setSelectedCountry({
+                code: countryCode,
+                name: countryName,
+                x,
+                y
+              });
+            }
+          });
       });
   };
 
-  // Draw the initial map
+  // Effect to draw the map when component mounts or data changes
   useEffect(() => {
-    drawMap(countryData);
-    
-    // Handle clicks outside the map to close the popup
+    if (Object.keys(countryData).length > 0 || !mapRef.current?.hasChildNodes()) {
+      drawMap(countryData);
+    }
+  }, [countryData, width, height]);
+
+  // Effect to add document click listener for closing popups
+  useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
-      if (mapRef.current && !mapRef.current.contains(e.target as Node)) {
+      if (selectedCountry && mapRef.current && !mapRef.current.contains(e.target as Node)) {
         setSelectedCountry(null);
       }
     };
-    
+
     document.addEventListener('click', handleDocumentClick);
-    
-    // Cleanup
     return () => {
       document.removeEventListener('click', handleDocumentClick);
     };
-  }, [width, height, countryData]);
-  
+  }, [selectedCountry]);
+
+  // Render the world map
   return (
     <div className="relative">
       <div 
         ref={mapRef} 
-        className="relative w-full h-full"
-        style={{ minHeight: `${height}px` }}
+        className="w-full h-full bg-white rounded-lg overflow-hidden shadow-md"
       />
       
-      {/* Country selection popup */}
+      {/* Country popup */}
       {selectedCountry && (
         <div 
-          className="absolute z-10 bg-white shadow-lg rounded-md p-2 flex flex-col gap-2"
-          style={{
-            position: 'fixed',
-            left: `${selectedCountry.x}px`,
+          className="absolute bg-white rounded-lg shadow-lg p-4 z-10"
+          style={{ 
+            left: `${selectedCountry.x}px`, 
             top: `${selectedCountry.y}px`,
-            transform: 'translate(-50%, -100%)',
+            transform: 'translate(-50%, -50%)'
           }}
-          onClick={(e) => e.stopPropagation()}
         >
-          <div className="font-medium text-center pb-1">{selectedCountry.name}</div>
-          <button 
-            disabled={loading}
-            onClick={() => {
-              addDebug(`Visiting ${selectedCountry.name} (${selectedCountry.code})`);
-              updateCountryStatus(selectedCountry.code, 'visited');
-            }}
-            className={`px-3 py-1 rounded-md ${countryData[selectedCountry.code] === 'visited' 
-              ? 'bg-green-600 text-white' 
-              : 'bg-green-100 hover:bg-green-200 text-green-800'}`}
-          >
-            {countryData[selectedCountry.code] === 'visited' ? '✓ Visited' : 'Mark as Visited'}
-          </button>
-          <button 
-            disabled={loading}
-            onClick={() => {
-              addDebug(`Want to visit ${selectedCountry.name} (${selectedCountry.code})`);
-              updateCountryStatus(selectedCountry.code, 'want-to-visit');
-            }}
-            className={`px-3 py-1 rounded-md ${countryData[selectedCountry.code] === 'want-to-visit' 
-              ? 'bg-blue-600 text-white' 
-              : 'bg-blue-100 hover:bg-blue-200 text-blue-800'}`}
-          >
-            {countryData[selectedCountry.code] === 'want-to-visit' ? '✓ Want to Visit' : 'Want to Visit'}
-          </button>
-          {countryData[selectedCountry.code] && (
-            <button 
+          <h3 className="font-bold mb-2">{selectedCountry.name}</h3>
+          <div className="flex flex-col gap-2">
+            <button
               disabled={loading}
-              onClick={() => {
-                addDebug(`Removing ${selectedCountry.name} (${selectedCountry.code})`);
-                updateCountryStatus(selectedCountry.code, null);
-              }}
-              className="px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-800"
+              onClick={() => updateCountryStatus(selectedCountry.code, 'visited')}
+              className={`px-2 py-1 rounded ${
+                countryData[selectedCountry.code] === 'visited'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-200 hover:bg-green-500 hover:text-white'
+              }`}
             >
-              Remove Marker
+              ✅ Visited
             </button>
-          )}
-        </div>
-      )}
-
-      {/* Loading indicator */}
-      {loading && (
-        <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-          <div className="loading-spinner"></div>
+            <button
+              disabled={loading}
+              onClick={() => updateCountryStatus(selectedCountry.code, 'want-to-visit')}
+              className={`px-2 py-1 rounded ${
+                countryData[selectedCountry.code] === 'want-to-visit'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 hover:bg-blue-500 hover:text-white'
+              }`}
+            >
+              🗺️ Want to Visit
+            </button>
+            {countryData[selectedCountry.code] && (
+              <button
+                disabled={loading}
+                onClick={() => updateCountryStatus(selectedCountry.code, null)}
+                className="px-2 py-1 bg-gray-200 hover:bg-red-500 hover:text-white rounded"
+              >
+                ❌ Remove
+              </button>
+            )}
+          </div>
         </div>
       )}
       
-      {/* Debug info (hidden in production) */}
-      {debug.length > 0 && (
-        <div className="fixed bottom-4 right-4 bg-white p-2 rounded shadow-lg max-w-md max-h-60 overflow-auto opacity-80 text-xs">
-          <h3 className="font-bold mb-1">Debug Info:</h3>
+      {/* Debug panel - hidden in production */}
+      {process.env.NODE_ENV === 'development' && debug.length > 0 && (
+        <div className="fixed bottom-0 right-0 bg-gray-800 text-white p-4 max-w-xs max-h-60 overflow-auto z-50 text-xs">
+          <h4 className="font-bold mb-2">Debug:</h4>
           <ul>
             {debug.slice(-10).map((msg, i) => (
               <li key={i}>{msg}</li>
@@ -411,6 +514,8 @@ const WorldMap = ({ width, height }: WorldMapProps) => {
       )}
     </div>
   );
-};
+});
+
+WorldMap.displayName = 'WorldMap';
 
 export default WorldMap; 
