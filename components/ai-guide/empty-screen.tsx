@@ -3,20 +3,20 @@ import { ArrowRight } from 'lucide-react'
 
 const exampleMessages = [
   {
-    heading: 'What is DeepSeek R1?',
-    message: 'What is DeepSeek R1?'
+    heading: 'Provide me a top 5 list of the most fascinating places to visit in the Shenzhen',
+    message: 'Provide me a top 5 list of the most fascinating places to visit in the Shenzhen'
   },
   {
-    heading: 'Why is Nvidia growing rapidly?',
-    message: 'Why is Nvidia growing rapidly?'
+    heading: 'Plan a 3 day solo trip to Barcelona',
+    message: 'Plan a 3 day solo trip to Barcelona'
   },
   {
-    heading: 'Tesla vs Rivian',
-    message: 'Tesla vs Rivian'
+    heading: 'Paris vs London: Which city to visit?',
+    message: 'Paris vs London: Which city to visit?'
   },
   {
-    heading: 'Summary: https://arxiv.org/pdf/2501.05707',
-    message: 'Summary: https://arxiv.org/pdf/2501.05707'
+    heading: 'Summary: https://www.lonelyplanet.com/best-in-travel',
+    message: 'Summary: https://www.lonelyplanet.com/best-in-travel'
   }
 ]
 export function EmptyScreen({
