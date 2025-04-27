@@ -1,14 +1,20 @@
 import { NextResponse } from 'next/server';
 import redis from '@/lib/redis';
-
-// Фиксированный Mock ID пользователя (в реальном приложении это будет из аутентификации)
-const MOCK_USER_ID = 'user-123';
+import { auth } from '@clerk/nextjs/server';
 
 export async function GET() {
   try {
+    // Get the authenticated user ID
+    const { userId } = await auth();
+    
+    // Return 401 if not authenticated
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    
     // Получить данные стран текущего пользователя из Redis
     // В Redis ключи имеют формат: countries:{userId}
-    const userData = await redis.get(`countries:${MOCK_USER_ID}`) || {};
+    const userData = await redis.get(`countries:${userId}`) || {};
     
     return NextResponse.json(userData, { status: 200 });
   } catch (error) {

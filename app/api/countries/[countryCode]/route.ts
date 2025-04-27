@@ -1,19 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import redis from '@/lib/redis';
+import { auth } from '@clerk/nextjs/server';
 
 // Типы статусов стран
 export type CountryStatus = 'visited' | 'want-to-visit';
 
-// Фиксированный Mock ID пользователя (в реальном приложении это будет из аутентификации)
-const MOCK_USER_ID = 'user-123';
-
 // Получить статус конкретной страны
 export async function GET(
   request: NextRequest,
-  { params }: { params: { countryCode: string } }
+  { params }: { params: Promise<{ countryCode: string }> }
 ) {
   try {
-    const { countryCode } = params;
+    // Await params before using their properties
+    const { countryCode } = await params;
+    
+    // Get the authenticated user ID
+    const { userId } = await auth();
+    
+    // Return 401 if not authenticated
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
     
     // Проверка кода страны
     if (!countryCode || countryCode.trim() === '') {
@@ -24,7 +31,7 @@ export async function GET(
     }
     
     // Получить все данные пользователя
-    const userData = await redis.get(`countries:${MOCK_USER_ID}`) || {};
+    const userData = await redis.get(`countries:${userId}`) || {};
     const countryStatus = userData[countryCode];
     
     if (!countryStatus) {
@@ -47,10 +54,19 @@ export async function GET(
 // Добавить новый статус страны
 export async function POST(
   request: NextRequest,
-  { params }: { params: { countryCode: string } }
+  { params }: { params: Promise<{ countryCode: string }> }
 ) {
   try {
-    const { countryCode } = params;
+    // Await params before using their properties
+    const { countryCode } = await params;
+    
+    // Get the authenticated user ID
+    const { userId } = await auth();
+    
+    // Return 401 if not authenticated
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
     
     // Проверка кода страны
     if (!countryCode || countryCode.trim() === '') {
@@ -61,7 +77,7 @@ export async function POST(
     }
     
     // Получить существующие данные пользователя
-    const userData = await redis.get(`countries:${MOCK_USER_ID}`) || {};
+    const userData = await redis.get(`countries:${userId}`) || {};
     
     // Проверить, существует ли уже страна
     if (userData[countryCode]) {
@@ -85,7 +101,7 @@ export async function POST(
     userData[countryCode] = data.status;
     
     // Сохранить обновленные данные в Redis
-    await redis.set(`countries:${MOCK_USER_ID}`, userData);
+    await redis.set(`countries:${userId}`, userData);
     
     return NextResponse.json(
       { message: 'Country status added successfully', status: data.status },
@@ -103,10 +119,19 @@ export async function POST(
 // Обновить статус страны
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { countryCode: string } }
+  { params }: { params: Promise<{ countryCode: string }> }
 ) {
   try {
-    const { countryCode } = params;
+    // Await params before using their properties
+    const { countryCode } = await params;
+    
+    // Get the authenticated user ID
+    const { userId } = await auth();
+    
+    // Return 401 if not authenticated
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
     
     // Проверка кода страны
     if (!countryCode || countryCode.trim() === '') {
@@ -117,7 +142,7 @@ export async function PUT(
     }
     
     // Получить существующие данные пользователя
-    const userData = await redis.get(`countries:${MOCK_USER_ID}`) || {};
+    const userData = await redis.get(`countries:${userId}`) || {};
     
     // Проверить, является ли это запросом на удаление (обходной путь для Next.js API routes)
     const url = new URL(request.url);
@@ -127,7 +152,7 @@ export async function PUT(
         delete userData[countryCode];
         
         // Сохранить обновленные данные в Redis
-        await redis.set(`countries:${MOCK_USER_ID}`, userData);
+        await redis.set(`countries:${userId}`, userData);
         
         return NextResponse.json(
           { message: 'Country status removed successfully' },
@@ -155,7 +180,7 @@ export async function PUT(
     userData[countryCode] = data.status;
     
     // Сохранить обновленные данные в Redis
-    await redis.set(`countries:${MOCK_USER_ID}`, userData);
+    await redis.set(`countries:${userId}`, userData);
     
     return NextResponse.json(
       { message: 'Country status updated successfully', status: data.status },
@@ -173,10 +198,19 @@ export async function PUT(
 // Удалить статус страны
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { countryCode: string } }
+  { params }: { params: Promise<{ countryCode: string }> }
 ) {
   try {
-    const { countryCode } = params;
+    // Await params before using their properties
+    const { countryCode } = await params;
+    
+    // Get the authenticated user ID
+    const { userId } = await auth();
+    
+    // Return 401 if not authenticated
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
     
     // Проверка кода страны
     if (!countryCode || countryCode.trim() === '') {
@@ -187,7 +221,7 @@ export async function DELETE(
     }
     
     // Получить существующие данные пользователя
-    const userData = await redis.get(`countries:${MOCK_USER_ID}`) || {};
+    const userData = await redis.get(`countries:${userId}`) || {};
     
     // Проверить, существует ли страна
     if (!userData[countryCode]) {
@@ -201,7 +235,7 @@ export async function DELETE(
     delete userData[countryCode];
     
     // Сохранить обновленные данные в Redis
-    await redis.set(`countries:${MOCK_USER_ID}`, userData);
+    await redis.set(`countries:${userId}`, userData);
     
     return NextResponse.json(
       { message: 'Country status removed successfully' },
