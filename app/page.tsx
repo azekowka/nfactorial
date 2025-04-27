@@ -4,7 +4,6 @@ import { Features } from '@/components/landing/features';
 import { AnimatedModalDemo } from '@/components/modal';
 import { PageContainer } from '@/components/page-container';
 import { InfiniteSliderDemo } from '@/components/slider';
-import { CarouselDemo } from '@/components/carouseldemo';
 
 export default function Home() {
   return (
@@ -16,7 +15,6 @@ export default function Home() {
       </div>
       <Features />
       <InfiniteSliderDemo />
-      <CarouselDemo />
     </PageContainer>
   );
 }
