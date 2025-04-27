@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "motion/react";
 import dynamic from "next/dynamic";
 import { Cover } from "@/components/ui/cover";
+import { LinkPreview } from "@/components/ui/link-preview";
 
 const World = dynamic(() => import("./ui/globe").then((m) => m.World), {
   ssr: false,
@@ -414,7 +415,7 @@ export function GlobeDemo() {
         >
           <div className="text-center">
             <h2 className="text-center text-xl md:text-7xl font-bold mb-6">
-              Explore the world, 
+              Explore the world,       
             </h2>
             <h2 className="text-center text-xl md:text-7xl font-bold">
               one pin
