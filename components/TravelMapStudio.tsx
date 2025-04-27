@@ -100,12 +100,6 @@ const TravelMapStudio = () => {
       </div>
       
       <div className="w-full md:w-1/4 flex flex-col gap-4">
-
-        <VehicleSelector
-          vehicleType={vehicleType}
-          onVehicleChange={handleVehicleChange}
-        />
-
         <CountrySelector 
           selectedCountries={selectedCountries}
           onSelectCountry={handleCountrySelect}
@@ -123,6 +117,12 @@ const TravelMapStudio = () => {
           onExport={handleExport}
           isExporting={isExporting}
         />
+
+        <VehicleSelector
+          vehicleType={vehicleType}
+          onVehicleChange={handleVehicleChange}
+        />
+
         {/*
         <VideoExporter 
           selectedCountries={selectedCountries}
