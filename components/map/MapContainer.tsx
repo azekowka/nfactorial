@@ -3,10 +3,21 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+// @ts-ignore: Missing declaration file
 import * as turf from "@turf/turf";
 import { Country, VehicleType } from "@/types/map-types";
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
+
+// Define GeoJSON type for the route
+interface RouteGeoJSON {
+  type: "Feature";
+  properties: Record<string, any>;
+  geometry: {
+    type: "LineString";
+    coordinates: number[][];
+  };
+}
 
 interface MapContainerProps {
   selectedCountries: Country[];
@@ -28,10 +39,10 @@ const MapContainer = ({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const animationRef = useRef<number | null>(null);
-  const [route, setRoute] = useState<any>(null);
+  const [route, setRoute] = useState<RouteGeoJSON | null>(null);
   const [hasStartedAnimation, setHasStartedAnimation] = useState(false);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
-  const routeRef = useRef<any>(null);
+  const routeRef = useRef<RouteGeoJSON | null>(null);
 
   console.log("State check:", { isAnimating, hasStartedAnimation, selectedCountries: selectedCountries.length, route: !!route });
   
@@ -158,7 +169,7 @@ const MapContainer = ({
   }, [vehicleType, selectedCountries, updateMarker]);
 
   // Create route line between countries
-  const createRouteLine = useCallback((countries: Country[]) => {
+  const createRouteLine = useCallback((countries: Country[]): RouteGeoJSON | null => {
     if (countries.length < 2) return null;
     
     const coordinates = countries.map(country => [
@@ -190,7 +201,7 @@ const MapContainer = ({
     
     // Update map route
     if (mapRef.current.getSource('route')) {
-      (mapRef.current.getSource('route') as mapboxgl.GeoJSONSource).setData(routeData);
+      (mapRef.current.getSource('route') as mapboxgl.GeoJSONSource).setData(routeData as GeoJSON.Feature);
     }
 
     // Position marker at first country

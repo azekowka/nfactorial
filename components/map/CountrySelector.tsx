@@ -168,7 +168,6 @@ const CountrySelector = ({
         ) : (
           <DragDropContext 
             onDragEnd={handleDragEnd}
-            ignoreContainerClipping={false} // Fixed: Explicit boolean value
           >
             <Droppable droppableId="itinerary">
               {(provided) => (

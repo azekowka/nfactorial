@@ -1,0 +1,10 @@
+{
+  "extends": "next/core-web-vitals",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "env": {
+    "es6": true,
+    "node": true
+  }
+} 

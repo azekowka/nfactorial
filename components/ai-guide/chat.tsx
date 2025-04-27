@@ -2,8 +2,7 @@
 
 import { CHAT_ID } from '@/lib/constants'
 import { Model } from '@/lib/types/models'
-import { useChat } from '@ai-sdk/react'
-import { Message } from 'ai/react'
+import { useChat, type Message } from '@ai-sdk/react'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 import { ChatMessages } from './chat-messages'

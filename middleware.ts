@@ -1,45 +1,47 @@
+import { NextResponse } from "next/server";
 import { clerkMiddleware } from "@clerk/nextjs/server";
-import { NextResponse, type NextRequest } from 'next/server';
 
-function addHeaders(req: NextRequest, response: NextResponse) {
-  const protocol = req.headers.get('x-forwarded-proto') || req.nextUrl.protocol;
-  const host = req.headers.get('x-forwarded-host') || req.headers.get('host') || '';
-  const baseUrl = `${protocol}${protocol.endsWith(':') ? '//' : '://'}${host}`;
-
-  response.headers.set('x-url', req.url);
-  response.headers.set('x-host', host);
-  response.headers.set('x-protocol', protocol);
-  response.headers.set('x-base-url', baseUrl);
+// Set up security headers for your application
+function addSecurityHeaders(response: NextResponse) {
+  response.headers.set("X-DNS-Prefetch-Control", "on");
+  response.headers.set("X-XSS-Protection", "1; mode=block");
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("Referrer-Policy", "origin-when-cross-origin");
+  response.headers.set("X-Frame-Options", "SAMEORIGIN");
+  return response;
 }
 
-export default clerkMiddleware((auth, req) => {
-  const publicRoutes = ["/", "/sign-in", "/sign-up"];
-  const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname.startsWith(route));
-
-  let response: NextResponse;
+export default clerkMiddleware(async (auth, req) => {
+  const { userId } = await auth();
 
   // Redirect logged-in users away from auth pages
-  if (auth.userId && (req.nextUrl.pathname === "/sign-in" || req.nextUrl.pathname === "/sign-up")) {
-    response = NextResponse.redirect(new URL("/dashboard", req.url));
+  if (userId && (req.nextUrl.pathname === "/sign-in" || req.nextUrl.pathname === "/sign-up")) {
+    return NextResponse.redirect(new URL("/", req.url));
   }
-  // Redirect non-logged-in users from protected routes
-  else if (!auth.userId && !isPublicRoute) {
-    response = NextResponse.redirect(new URL("/sign-in", req.url));
-  }
-  // Allow public routes and authenticated users to proceed
-  else {
-    response = NextResponse.next();
+
+  // If the user is not logged in and trying to access a protected route
+  if (!userId && 
+    req.nextUrl.pathname !== "/" && 
+    req.nextUrl.pathname !== "/sign-in" && 
+    req.nextUrl.pathname !== "/sign-up" && 
+    !req.nextUrl.pathname.startsWith("/api/webhooks")) {
+    return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 
   // Add security headers to all responses
-  addHeaders(req, response);
-
-  return response;
+  const response = NextResponse.next();
+  return addSecurityHeaders(response);
 });
 
 export const config = {
   matcher: [
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    '/(api|trpc)(.*)',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public (public files)
+     */
+    "/((?!_next/static|_next/image|favicon.ico|public).*)",
   ],
 };

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Play, Pause, RotateCcw, Square, FileVideo } from "lucide-react";
 import { Country } from "@/types/map-types";
+// @ts-ignore: Missing declaration file
 import * as turf from '@turf/turf';
 import VideoExporter from "./VideoExporter";
 
