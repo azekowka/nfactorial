@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { countryStatusStore, MOCK_USER_ID, CountryStatus } from '../store';
+import redis from '@/lib/redis';
 
-// Get a specific country's status
+// Типы статусов стран
+export type CountryStatus = 'visited' | 'want-to-visit';
+
+// Фиксированный Mock ID пользователя (в реальном приложении это будет из аутентификации)
+const MOCK_USER_ID = 'user-123';
+
+// Получить статус конкретной страны
 export async function GET(
   request: NextRequest,
   { params }: { params: { countryCode: string } }
@@ -9,7 +15,7 @@ export async function GET(
   try {
     const { countryCode } = params;
     
-    // Validate country code - allow any non-empty string now
+    // Проверка кода страны
     if (!countryCode || countryCode.trim() === '') {
       return NextResponse.json(
         { error: 'Invalid country code' },
@@ -17,7 +23,8 @@ export async function GET(
       );
     }
     
-    const userData = countryStatusStore[MOCK_USER_ID] || {};
+    // Получить все данные пользователя
+    const userData = await redis.get(`countries:${MOCK_USER_ID}`) || {};
     const countryStatus = userData[countryCode];
     
     if (!countryStatus) {
@@ -37,7 +44,7 @@ export async function GET(
   }
 }
 
-// Add a new country status
+// Добавить новый статус страны
 export async function POST(
   request: NextRequest,
   { params }: { params: { countryCode: string } }
@@ -45,7 +52,7 @@ export async function POST(
   try {
     const { countryCode } = params;
     
-    // Validate country code - allow any non-empty string now
+    // Проверка кода страны
     if (!countryCode || countryCode.trim() === '') {
       return NextResponse.json(
         { error: 'Invalid country code' },
@@ -53,9 +60,10 @@ export async function POST(
       );
     }
     
-    const userData = countryStatusStore[MOCK_USER_ID] || {};
+    // Получить существующие данные пользователя
+    const userData = await redis.get(`countries:${MOCK_USER_ID}`) || {};
     
-    // Check if country already exists
+    // Проверить, существует ли уже страна
     if (userData[countryCode]) {
       return NextResponse.json(
         { error: 'Country already exists. Use PUT to update.' },
@@ -65,7 +73,7 @@ export async function POST(
     
     const data = await request.json();
     
-    // Validate status
+    // Проверка статуса
     if (!data.status || !['visited', 'want-to-visit'].includes(data.status)) {
       return NextResponse.json(
         { error: 'Invalid status. Must be "visited" or "want-to-visit".' },
@@ -73,9 +81,11 @@ export async function POST(
       );
     }
     
-    // Add country status
+    // Добавить статус страны
     userData[countryCode] = data.status;
-    countryStatusStore[MOCK_USER_ID] = userData;
+    
+    // Сохранить обновленные данные в Redis
+    await redis.set(`countries:${MOCK_USER_ID}`, userData);
     
     return NextResponse.json(
       { message: 'Country status added successfully', status: data.status },
@@ -90,7 +100,7 @@ export async function POST(
   }
 }
 
-// Update a country's status
+// Обновить статус страны
 export async function PUT(
   request: NextRequest,
   { params }: { params: { countryCode: string } }
@@ -98,7 +108,7 @@ export async function PUT(
   try {
     const { countryCode } = params;
     
-    // Validate country code - allow any non-empty string now
+    // Проверка кода страны
     if (!countryCode || countryCode.trim() === '') {
       return NextResponse.json(
         { error: 'Invalid country code' },
@@ -106,15 +116,19 @@ export async function PUT(
       );
     }
     
-    const userData = countryStatusStore[MOCK_USER_ID] || {};
+    // Получить существующие данные пользователя
+    const userData = await redis.get(`countries:${MOCK_USER_ID}`) || {};
     
-    // Check if method is DELETE (workaround for Next.js API routes)
+    // Проверить, является ли это запросом на удаление (обходной путь для Next.js API routes)
     const url = new URL(request.url);
     if (url.searchParams.get('_method') === 'DELETE') {
-      // Delete the country status
+      // Удалить статус страны
       if (userData[countryCode]) {
         delete userData[countryCode];
-        countryStatusStore[MOCK_USER_ID] = userData;
+        
+        // Сохранить обновленные данные в Redis
+        await redis.set(`countries:${MOCK_USER_ID}`, userData);
+        
         return NextResponse.json(
           { message: 'Country status removed successfully' },
           { status: 200 }
@@ -129,7 +143,7 @@ export async function PUT(
     
     const data = await request.json();
     
-    // Validate status
+    // Проверка статуса
     if (!data.status || !['visited', 'want-to-visit'].includes(data.status)) {
       return NextResponse.json(
         { error: 'Invalid status. Must be "visited" or "want-to-visit".' },
@@ -137,9 +151,11 @@ export async function PUT(
       );
     }
     
-    // Update country status
+    // Обновить статус страны
     userData[countryCode] = data.status;
-    countryStatusStore[MOCK_USER_ID] = userData;
+    
+    // Сохранить обновленные данные в Redis
+    await redis.set(`countries:${MOCK_USER_ID}`, userData);
     
     return NextResponse.json(
       { message: 'Country status updated successfully', status: data.status },
@@ -154,7 +170,7 @@ export async function PUT(
   }
 }
 
-// Delete a country status
+// Удалить статус страны
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { countryCode: string } }
@@ -162,7 +178,7 @@ export async function DELETE(
   try {
     const { countryCode } = params;
     
-    // Validate country code - allow any non-empty string now
+    // Проверка кода страны
     if (!countryCode || countryCode.trim() === '') {
       return NextResponse.json(
         { error: 'Invalid country code' },
@@ -170,9 +186,10 @@ export async function DELETE(
       );
     }
     
-    const userData = countryStatusStore[MOCK_USER_ID] || {};
+    // Получить существующие данные пользователя
+    const userData = await redis.get(`countries:${MOCK_USER_ID}`) || {};
     
-    // Check if country exists
+    // Проверить, существует ли страна
     if (!userData[countryCode]) {
       return NextResponse.json(
         { error: 'Country not found' },
@@ -180,9 +197,11 @@ export async function DELETE(
       );
     }
     
-    // Delete the country status
+    // Удалить статус страны
     delete userData[countryCode];
-    countryStatusStore[MOCK_USER_ID] = userData;
+    
+    // Сохранить обновленные данные в Redis
+    await redis.set(`countries:${MOCK_USER_ID}`, userData);
     
     return NextResponse.json(
       { message: 'Country status removed successfully' },
