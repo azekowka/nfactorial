@@ -1,7 +1,9 @@
-# <p align="center" height="20px" width="20px"> Wanderlust (World Map Tracker) </p>
-![Wanderlust Logo](https://notion-emojis.s3-us-west-2.amazonaws.com/prod/svg-twitter/1f5fa-fe0f.svg)
+<p align="center" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+  <img src="https://notion-emojis.s3-us-west-2.amazonaws.com/prod/svg-twitter/1f5fa-fe0f.svg" alt="Wanderlust Logo" width="24" height="24"/>
+  <span style="font-size: 24px;">Wanderlust (World Map Tracker)</span>
+</p>
 
-A brief description of the World Map Tracker project, highlighting its purpose and functionality.
+Это веб-приложение, позволяющее путешественникам отслеживать свои поездки и получать рекомендации, планы от ИИ на основе глубокого поиска.
 
 ## Getting Started
 
