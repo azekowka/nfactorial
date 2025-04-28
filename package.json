@@ -49,7 +49,7 @@
     "ai": "^4.3.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cmdk": "^1.1.1",
+    "cmdk": "1.0.0",
     "cobe": "^0.6.3",
     "d3": "^7.9.0",
     "embla-carousel-react": "^8.0.0",
