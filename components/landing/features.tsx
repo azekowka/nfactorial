@@ -9,38 +9,38 @@ import { IconBrandYoutubeFilled } from "@tabler/icons-react";
 export function Features() {
   const features = [
     {
-      title: "Track issues effectively",
+      title: "Animate your travels",
       description:
-        "Track and manage your project issues with ease using our intuitive interface.",
+        "Track your travels effortlessly",
       skeleton: <SkeletonOne />,
       className:
         "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
     },
     {
-      title: "Capture pictures with AI",
+      title: "Explore places with AI",
       description:
-        "Capture stunning photos effortlessly using our advanced AI technology.",
+        "Get instant recommendations, trip plans, citations, and more",
       skeleton: <SkeletonTwo />,
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },
     {
-      title: "Watch our AI on YouTube",
+      title: "Watch our demo on Loom",
       description:
-        "Whether its you or Tyler Durden, you can get to know about our product on YouTube",
+        "",
       skeleton: <SkeletonThree />,
       className:
         "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
     },
     {
-      title: "Deploy in seconds",
+      title: "Worldwide coverage",
       description:
-        "With our blazing fast, state of the art, cutting edge, we are so back cloud servies (read AWS) - you can deploy your model in seconds.",
+        "Built for travelers, by travelers.",
       skeleton: <SkeletonFour />,
       className: "col-span-1 lg:col-span-3 border-b lg:border-none",
     },
   ];
   return (
-    <div className="relative z-20 py-0 lg:py-10 max-w-7xl mx-auto w-full">
+    <div id="features" className="relative z-20 py-0 lg:py-10 max-w-7xl mx-auto w-full">
       <div className="px-8">
         <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-black dark:text-white">
           Packed with thousands of features
@@ -54,8 +54,12 @@ export function Features() {
 
       <div className="relative ">
         <div className="grid grid-cols-1 lg:grid-cols-6 mt-12 xl:border rounded-md dark:border-neutral-800">
-          {features.map((feature) => (
-            <FeatureCard key={feature.title} className={feature.className}>
+          {features.map((feature, index) => (
+            <FeatureCard 
+              key={feature.title} 
+              className={feature.className}
+              id={`feature-${index + 1}`}
+            >
               <FeatureTitle>{feature.title}</FeatureTitle>
               <FeatureDescription>{feature.description}</FeatureDescription>
               <div className=" h-full w-full">{feature.skeleton}</div>
@@ -70,12 +74,14 @@ export function Features() {
 const FeatureCard = ({
   children,
   className,
+  id,
 }: {
   children?: React.ReactNode;
   className?: string;
+  id?: string;
 }) => {
   return (
-    <div className={cn(`p-4 sm:p-8 relative overflow-hidden`, className)}>
+    <div id={id} className={cn(`p-4 sm:p-8 relative overflow-hidden`, className)}>
       {children}
     </div>
   );
@@ -110,7 +116,7 @@ export const SkeletonOne = () => {
         <div className="flex flex-1 w-full h-full flex-col space-y-2  ">
           {/* TODO */}
           <img
-            src="/linear.webp"
+            src="/images/map-animate.png"
             alt="header"
             width={800}
             height={800}
