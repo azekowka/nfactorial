@@ -1,22 +1,35 @@
 <p align="center" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-  <img src="https://notion-emojis.s3-us-west-2.amazonaws.com/prod/svg-twitter/1f5fa-fe0f.svg" alt="Wanderlust Logo" width="24" height="24"/>
-  <span style="font-size: 24px;">Wanderlust (World Map Tracker)</span>
+  <img src="https://notion-emojis.s3-us-west-2.amazonaws.com/prod/svg-twitter/1f5fa-fe0f.svg" alt="Wanderlust Logo" width="40" height="40"/>
+  <span style="font-size: 40px;">Wanderlust (World Map Tracker)</span>
 </p>
 
+## Краткое описание проекта
 Это веб-приложение, позволяющее путешественникам отслеживать свои поездки и получать рекомендации, планы от ИИ на основе глубокого поиска.
 
-## Getting Started
+## Установка и запуск
 
-First, run the development server:
+1. Клонируйте репозиторий:
+   ```bash
+   git clone https://github.com/azekowka/nfactorial.git
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. Установите зависимости:
+   ```bash
+   npm i
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Запустите проект:
+   ```bash
+   npm run dev
+   ```
+4. Откройте проект локально:
+   ```bash
+   http://localhost:3000
+   ```
+
+## Деплоймент
+
+Веб-приложение хостится на Vercel и доступно по следующей ссылке
+
+> [https://wanderlust-nfactorial.vercel.app](https://wanderlust-nfactorial.vercel.app)
+
