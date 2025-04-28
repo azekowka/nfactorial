@@ -4,6 +4,7 @@ const GeistSans = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const GeistMono = Inter({ subsets: ["latin"], variable: "--font-mono" });
 import { ThemeProvider } from "next-themes";
 import { ClerkProvider, SignedIn } from "@clerk/nextjs";
+import { Analytics } from "@vercel/analytics/react";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
@@ -49,6 +50,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
