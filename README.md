@@ -35,11 +35,13 @@
 
 ## Процесс разработки
 
-## Компромиссы
-
+## Некоторые компромиссы
+- Начну с деплоймента, совершал я его в последний оставшийся день и словил type, eslint, dependencies mismatch errors. От чего в попыхах исправлял деплой, убрал eslint и вручную пулл реквестами из deployment branch фиксил package.json & package-lock.json. В качестве компромисса, я бы предпочел npm run build-ить проект на начальных стадиях, чтобы решать эти проблемы попутно, а не тогда когда все готово =).
+- Я не использовал предложеные темплейты из visitedplaces.com, вместо этого создавал карты и визуализацию через MapBox, DataMaps, Three.js, D3.js, Turf.js, с не менее понятной документацией у каждой.
+  
 ## Известные ошибки
-
-- 
+- Groq ограничивает запросы, как видно в тексте ошибки: Request too large for model `meta-llama/llama-4-maverick-17b-128e-instruct` in organization `org_01jndhnschebht2mk2kchy7g6p` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 8543, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing
+- Глубокий поиск с помощью Tavily перестал работать на продакшне, но отлично работает локально (на видео продемонстрировал)
 
 ## Технический стек
 
