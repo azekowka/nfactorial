@@ -11,10 +11,10 @@ export default function CardDemo3() {
         <Skeleton />
       </CardSkeletonContainer>
       <div className="relative z-10">
-        <CardTitle className="font-bold text-xl md:text-2xl text-gray-50 mt-2">
+        <CardTitle className="font-bold text-xl md:text-2xl text-gray-800 dark:text-gray-50 mt-2">
           AI Travel Guide
         </CardTitle>
-        <CardDescription className="font-normal text-sm text-gray-50 my-4">
+        <CardDescription className="font-normal text-sm text-gray-600 dark:text-gray-300 my-4">
           Get personalized travel recommendations and insights.
         </CardDescription>
       </div>

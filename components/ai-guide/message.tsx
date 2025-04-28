@@ -26,28 +26,19 @@ export function BotMessage({
   // Modify the content to render LaTeX equations if LaTeX patterns are found
   const processedData = preprocessLaTeX(message || '')
 
-  if (containsLaTeX) {
-    return (
-      <MemoizedReactMarkdown
-        rehypePlugins={[
-          [rehypeExternalLinks, { target: '_blank' }],
-          [rehypeKatex]
-        ]}
-        remarkPlugins={[remarkGfm, remarkMath]}
-        className={cn(
-          'prose-sm prose-neutral prose-a:text-accent-foreground/50',
-          className
-        )}
-      >
-        {processedData}
-      </MemoizedReactMarkdown>
-    )
-  }
+  const plugins = containsLaTeX 
+    ? {
+        rehypePlugins: [[rehypeExternalLinks, { target: '_blank' }], rehypeKatex as any],
+        remarkPlugins: [remarkGfm, remarkMath]
+      }
+    : {
+        rehypePlugins: [[rehypeExternalLinks, { target: '_blank' }]],
+        remarkPlugins: [remarkGfm]
+      }
 
   return (
     <MemoizedReactMarkdown
-      rehypePlugins={[[rehypeExternalLinks, { target: '_blank' }]]}
-      remarkPlugins={[remarkGfm]}
+      {...plugins}
       className={cn(
         'prose prose-neutral dark:prose-invert',
         'prose-p:my-1.5 prose-headings:my-3',

@@ -27,8 +27,8 @@ export function NavbarDemo() {
       link: "/dashboard",
     },
     {
-      name: "Contact",
-      link: "/contact",
+      name: "Docs",
+      link: "https://github.com/azekowka/nfactorial",
     },
   ];
 

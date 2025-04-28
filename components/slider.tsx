@@ -15,14 +15,24 @@ export function InfiniteSliderDemo() {
         <div className="relative mt-8">
             <InfiniteSlider gap={24} reverse>
             <img
+                src='/images/nextlight.svg'
+                alt='Next logo'
+                className='h-[60px] w-auto block dark:hidden'
+            />
+            <img
                 src='/images/nextdark.svg'
                 alt='Next logo'
-                className='h-[60px] w-auto'
+                className='h-[60px] w-auto hidden dark:block'
+            />
+            <img
+                src='images/tailwindcss-wordmark.svg'
+                alt='TailwindCSS logo'
+                className='h-[60px] w-auto block dark:hidden'
             />
             <img
                 src='images/tailwindcss-dark.svg'
                 alt='TailwindCSS logo'
-                className='h-[60px] w-auto'
+                className='h-[60px] w-auto hidden dark:block'
             />
             <img
                 src='/images/upstash.svg'
@@ -40,9 +50,14 @@ export function InfiniteSliderDemo() {
                 className='h-[60px] w-auto'
             />
             <img
+                src='/images/tavilylight.png'
+                alt='Tavily logo'
+                className='h-[60px] w-auto block dark:hidden'
+            />
+            <img
                 src='/images/tavily-dark.svg'
                 alt='Tavily logo'
-                className='h-[60px] w-auto'
+                className='h-[60px] w-auto hidden dark:block'
             />
             <img
                 src='/images/svgl.svg'
@@ -50,9 +65,14 @@ export function InfiniteSliderDemo() {
                 className='h-[60px] w-auto'
             />
             <img
+                src='/images/vercel_wordmark.svg'
+                alt='Vercel logo'
+                className='h-[60px] w-auto block dark:hidden'
+            />
+            <img
                 src='/images/vercel-dark.svg'
                 alt='Vercel logo'
-                className='h-[60px] w-auto'
+                className='h-[60px] w-auto hidden dark:block'
             />
             <img
                 src='/images/redis.svg'
@@ -60,14 +80,24 @@ export function InfiniteSliderDemo() {
                 className='h-[60px] w-auto'
             />
             <img
+                src='images/clerk-light.svg'
+                alt='Clerk logo'
+                className='h-[60px] w-auto block dark:hidden'
+            />
+            <img
                 src='images/clerk-dark.svg'
                 alt='Clerk logo'
-                className='h-[60px] w-auto'
+                className='h-[60px] w-auto hidden dark:block'
             />
             <img
                 src='/images/radix.svg'
                 alt='Radix logo'
-                className='h-[60px] w-auto'
+                className='h-[60px] w-auto hidden dark:block'
+            />
+            <img
+                src='/images/radix-ui_light.svg'
+                alt='Radix logo'
+                className='h-[60px] w-auto block dark:hidden'
             />
             <img
                 src='/images/mapbox.svg'
@@ -77,7 +107,12 @@ export function InfiniteSliderDemo() {
             <img
                 src='/images/shadcn.svg'
                 alt='Shadcn logo'
-                className='h-[60px] w-auto'
+                className='h-[60px] w-auto hidden dark:block'
+            />
+            <img
+                src='/images/shadcn-ui.svg'
+                alt='Shadcn logo'
+                className='h-[60px] w-auto block dark:hidden'
             />
             </InfiniteSlider>
         </div>
