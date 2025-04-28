@@ -133,7 +133,7 @@ export const SkeletonOne = () => {
 export const SkeletonThree = () => {
   return (
     <a
-      href="https://www.youtube.com/watch?v=RPa3_AD1_Vs"
+      href="https://youtu.be/7fk5XHN2dKY"
       target="__blank"
       className="relative flex gap-10  h-full group/image"
     >
@@ -142,7 +142,7 @@ export const SkeletonThree = () => {
           {/* TODO */}
           <IconBrandYoutubeFilled className="h-20 w-20 absolute z-10 inset-0 text-red-500 m-auto " />
           <img
-            src="https://assets.aceternity.com/fireship.jpg"
+            src="/images/asset.png"
             alt="header"
             width={800}
             height={800}

@@ -33,6 +33,10 @@
 
 > [https://wanderlust-nfactorial.vercel.app](https://wanderlust-nfactorial.vercel.app)
 
+Ссылка на техническое задание (ТЗ)
+
+ю [https://nfactorial-group.notion.site/world-map-tracker](https://nfactorial-group.notion.site/world-map-tracker)
+
 ## Процесс разработки
 
 User попадая на мое веб-приложение онбордится на лаконичном лэндинге, который сделан с помощью UI компонентов Aceternity. Авторизируется в систему через ClerkAuth и редиректится в дэшборд, иначе ему будет отказано в доступе. В дэшборде его встречают карточки с features (одна из них с Тайлер Дерденом):
