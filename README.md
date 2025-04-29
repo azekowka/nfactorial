@@ -13,16 +13,43 @@
    git clone https://github.com/azekowka/nfactorial.git
    ```
 
-2. Установите зависимости:
+2. Переименуйте .env.local.example на .env.local, и вставьте API keys:
+   ```bash
+   #------------------------------------------------------------------------------
+    # AI Providers - Gemini & Groq
+    GOOGLE_GENERATIVE_AI_API_KEY= # https://aistudio.google.com/u/2/apikey
+    GROQ_API_KEY= # https://console.groq.com/keys
+    #------------------------------------------------------------------------------
+    # Search Providers - Tavily & Serper
+    SEARCH_API=tavily # options: tavily, searxng, exa
+    TAVILY_API_KEY= #
+    SERPER_API_KEY=  # Enable video search capability. https://serper.dev/api-key 
+    #------------------------------------------------------------------------------
+    # Storage Provider - Upstash Redis
+    UPSTASH_REDIS_REST_URL="https://something.upstash.io"  # Upstash Redis REST URL
+    UPSTASH_REDIS_REST_TOKEN="" # Upstash Redis REST Token
+    
+    ENABLE_SAVE_CHAT_HISTORY=true  # enable chat history storage
+    NEXT_PUBLIC_ENABLE_SHARE=true  # enable sharing of chat conversations
+    #------------------------------------------------------------------------------
+    # Auth Provider - Clerk
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+    CLERK_SECRET_KEY=
+    #------------------------------------------------------------------------------
+    # Map Provider - MapBox
+    NEXT_PUBLIC_MAPBOX_TOKEN= # https://console.mapbox.com/account/access-tokens
+   ```
+
+3. Установите зависимости:
    ```bash
    npm i
    ```
 
-3. Запустите проект:
+4. Запустите проект:
    ```bash
    npm run dev
    ```
-4. Откройте проект локально:
+5. Откройте проект локально:
    ```bash
    http://localhost:3000
    ```
