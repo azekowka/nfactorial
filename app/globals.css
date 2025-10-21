@@ -184,18 +184,15 @@
 }
 
 /* Apply animations to vehicle types */
-.vehicle-marker:has(img[alt="✈️"]),
-.vehicle-marker:contains("✈️") {
+.vehicle-marker:has(img[alt="✈️"]) {
   animation: bounce 2s infinite !important;
 }
 
-.vehicle-marker:has(img[alt="🚗"]),
-.vehicle-marker:contains("🚗") {
+.vehicle-marker:has(img[alt="🚗"]) {
   animation: drive 0.5s infinite !important;
 }
 
-.vehicle-marker:has(img[alt="🚶"]),
-.vehicle-marker:contains("🚶") {
+.vehicle-marker:has(img[alt="🚶"]) {
   animation: walk 1s infinite !important;
 }
 
