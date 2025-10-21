@@ -5,6 +5,8 @@ import { Toaster } from '@/components/ai-guide/ui/sonner'
 import Layout from '@/components/dashboard/layout'
 import HistoryContainer from '@/components/ai-guide/history-container'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Page() {
   const id = generateId()
   const models = await getModels()
