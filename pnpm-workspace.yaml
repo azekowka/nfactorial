@@ -1,4 +1,0 @@
-onlyBuiltDependencies:
-  - '@clerk/shared'
-  - '@tsparticles/engine'
-  - '@vercel/speed-insights'
