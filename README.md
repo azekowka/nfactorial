@@ -62,7 +62,7 @@
 
 Ссылка на техническое задание (ТЗ)
 
-ю [https://nfactorial-group.notion.site/world-map-tracker](https://nfactorial-group.notion.site/world-map-tracker)
+[https://nfactorial-group.notion.site/world-map-tracker](https://nfactorial-group.notion.site/world-map-tracker)
 
 ## Процесс разработки
 
